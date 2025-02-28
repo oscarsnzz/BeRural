@@ -1,0 +1,31 @@
+<div class="star-rating">
+    {% for group, options, index in widget.optgroups %}
+        {% for option in options %}
+            <input type="radio" name="{{ widget.name }}" id="{{ widget.attrs.id }}_{{ option.value }}" value="{{ option.value }}"
+                   {% if option.value == widget.value %}checked{% endif %} {% include "django/forms/widgets/attrs.html" %}>
+            <label for="{{ widget.attrs.id }}_{{ option.value }}" class="star">&#9733;</label>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<style>
+    .star-rating {
+        display: flex;
+        direction: ltr;
+        font-size: 2rem;
+    }
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    .star-rating label {
+        cursor: pointer;
+        color: #ccc;
+    }
+    .star-rating input[type="radio"]:checked ~ label {
+        color: #ffc700;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffc700;
+    }
+</style>

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}
+
+ReleCloud - Destinations
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<h1 class="text-center">Cruise Destinations</h1>
+
+<p class="text-center">
+
+  If you can imagine it, we travel to it! Below are our most popular destinations.
+
+</p>
+
+
+
+<div class="container mt-4">
+
+  <div class="row">
+
+    {% for destination in destinations %}
+
+    <div class="col-md-4 mb-3">
+
+      <div class="card">
+
+        <div class="card-body">
+
+          <h5 class="card-title">{{ destination.name }}</h5>
+
+          <p>
+
+            <!-- Mostrar estrellas llenas -->
+
+            {% for _ in destination.stars_full %}
+
+            <i class="fas fa-star text-warning"></i>
+
+            {% endfor %}
+
+            <!-- Mostrar estrellas vacías -->
+
+            {% for _ in destination.stars_empty %}
+
+            <i class="far fa-star text-warning"></i>
+
+            {% endfor %}
+
+          </p>
+
+          <a class="btn btn-primary" href="{% url 'destination_detail' destination.id %}">View Details</a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+
+
+<div class="text-center mt-4">
+
+  {% if show_all %}
+
+  <a class="btn btn-secondary" href="{% url 'destinations' %}" style="background-color: #6a5acd; color: White; border: 1px solid #6a5acd;">Top Destinations</a>
+
+  {% else %}
+
+  <a class="btn mt-3" href="{% url 'destinations' %}?show_all=true" style="background-color: #6a5acd; color: White; border: 1px solid #6a5acd;">All Destinations</a>
+
+  {% endif %}
+
+</div>
+
+{% endblock %}

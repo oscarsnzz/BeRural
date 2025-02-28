@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Entornos virtuales
+.venv/
+venv/
+relecloud/venv
+
+# Archivos de configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración de IDEs
+.vscode/
+.idea/
+
+# Migrations cache
+**/migrations/**/__pycache__/
+**/migrations/*.pyc
+
+# Archivos de configuración temporales
+*.swp
+*.swo
+*.tmp
+
+
+# Archivos sensibles
+.env

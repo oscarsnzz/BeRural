@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} ReleCloud - {{ destination.name }} {% endblock title %}
+
+{% block left_image %}
+{% if destination.image %}
+<img src="{{ destination.image.url }}" alt="Image of {{ destination.name }}" class="img-fluid" />
+{% else %}
+<img src="{% static 'res/img/astronaut.jpeg' %}" alt="Astronaut image placeholder" class="img-fluid" />
+{% endif %}
+{% endblock left_image %}
+
+{% block content %}
+<h1>{{ destination.name }}</h1>
+<p>{{ destination.description }}</p>
+
+<a class="btn btn-primary" href="{% url 'destination_form' destination.pk %}">Edit destination</a>
+<a class="btn btn-danger" href="{% url 'destination_confirm_delete' destination.pk %}">Delete destination</a>
+
+<p>You can explore {{ destination.name }} on the following cruises:</p>
+<ul class="list-group">
+  {% for cruise in destination.cruises.all %}
+  {% if cruise.id %}
+  <a class="list-group-item list-group-item-action" href="{% url 'cruise_detail' cruise.id %}">
+    {{ cruise.name }}
+  </a>
+  {% else %}
+  <li class="list-group-item">Invalid cruise data</li>
+  {% endif %}
+  {% empty %}
+  <li class="list-group-item">No cruises available for this destination.</li>
+  {% endfor %}
+</ul>
+
+<h2>Reviews</h2>
+<p>
+  Average Rating:
+  {% for _ in full_stars %}
+  <i class="fas fa-star text-warning"></i>
+  {% endfor %}
+  {% for _ in empty_stars %}
+  <i class="far fa-star text-warning"></i>
+  {% endfor %}
+</p>
+
+
+  <div class="review-list">
+    {% for review in reviews %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">  
+    <div>
+      <!-- Renderizar estrellas para cada review -->
+      {% for _ in review.full_stars %}
+      <i class="fas fa-star text-warning"></i>
+      {% endfor %}
+      {% for _ in review.empty_stars %}
+      <i class="far fa-star text-warning"></i>
+      {% endfor %}
+    </div>
+ 
+ 
+    <p>   {{ review.comment }}</p>
+  </div>
+  </div>
+
+  {% empty %}
+  <p>No reviews yet. Be the first to review this destination!</p>
+  {% endfor %}
+
+<!-- Review submission form -->
+<h3>Add a Review</h3>
+<form method="post" action="{% url 'add_review' destination.pk 'destination' %}">
+    {% csrf_token %}
+  
+    <label for="rating">Rating:</label>
+    <div class="text-center">
+    <div id="star-rating" class="star-rating">
+        {% for i in "54321"|make_list %}
+        <input type="radio" id="star-{{ i }}" name="rating" value="{{ i }}" required />
+        <label for="star-{{ i }}" title="{{ i }} stars">
+            <i class="fas fa-star"></i>
+        </label>
+        {% endfor %}
+    </div>
+  </div>
+
+    <label for="id_comment">Comment:</label>
+    <br>
+    <textarea name="comment" id="id_comment" required></textarea>
+
+    <br>
+
+    <button type="submit" class="btn btn-success mt-2 ">Submit Review</button>
+</form>
+
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock extra_head %}

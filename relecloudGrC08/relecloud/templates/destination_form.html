@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block title %}
+Relecloud - Destination {% endblock title %} {% block content %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <!-- Formulario con soporte para archivos -->
+  {{ form|crispy }}
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>
+{% endblock %}
