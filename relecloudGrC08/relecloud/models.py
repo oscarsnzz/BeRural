@@ -42,6 +42,7 @@ class Cruise(models.Model):
 
     def get_absolute_url(self):
         return reverse("cruise_detail", kwargs={"pk": self.pk})
+    
 
 
 class InfoRequest(models.Model):
@@ -90,3 +91,13 @@ class Review(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class Usuario(models.Model):
+    nombre = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=20)
+    email = models.EmailField()
+    lugar_residencia = models.CharField(max_length=150)
+
+

@@ -31,12 +31,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'about' %}">About</a>
                 </li>
+                <!-- Nuevo enlace al formulario de registro -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registro' %}">Registro</a>
+                </li>
             </ul>
         </div>
     </nav>
 
     <main role="main">
-        <div class="main-header" style="background-image: url('{% static "res/img/cosmos-db.jpeg" %}'); background-size: cover;)">
+        <div class="main-header" style="background-image: url('{% static "res/img/cosmos-db.jpeg" %}'); background-size: cover;">
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
