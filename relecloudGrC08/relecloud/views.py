@@ -186,4 +186,4 @@ def registrar_usuario(request):
             return redirect('index')  # Asumiendo que 'index' es una URL válida
     else:
         form = UsuarioForm()
-    return render(request, 'Registro.html', {'form': form})  # Cambia aquí si es necesario
+    return render(request, 'Registro.html', {'form': form})  # Cambia aquí si es necesario, por ahora no lo es
