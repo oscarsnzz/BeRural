@@ -10,6 +10,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.conf import settings
 
+
+
+from django.shortcuts import render, redirect
+from .forms import UsuarioForm
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -169,3 +174,16 @@ def add_review(request, pk, model_type):
                 review.save()
                 return redirect(related_model.get_absolute_url())
         return redirect('/')
+
+
+from .forms import UsuarioForm
+
+def registrar_usuario(request):
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')  # Asumiendo que 'index' es una URL válida
+    else:
+        form = UsuarioForm()
+    return render(request, 'Registro.html', {'form': form})  # Cambia aquí si es necesario, por ahora no lo es

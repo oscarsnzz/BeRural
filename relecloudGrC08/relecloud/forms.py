@@ -46,4 +46,12 @@ class ReviewForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write your comment here...'}),
         }
 
-        
+
+from django import forms
+from .models import Usuario
+
+class UsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'apellidos', 'telefono', 'email', 'lugar_residencia']
+
