@@ -18,12 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from relecloud.views import registrar_usuario  # Asegúrate de que registrar_usuario está definido en relecloud/views.py
 
 urlpatterns = [
     # Rutas de administración
     path('admin/', admin.site.urls),
     # Rutas de la aplicación principal
     path('', include('relecloud.urls')),
+
+    # Añadido el path para el registro de usuarios
+    path('registro/', registrar_usuario, name='registro'),
 ]
 
 # Configuración para servir archivos multimedia en modo DEBUG
