@@ -1,5 +1,7 @@
 from django import forms
 from .models import InfoRequest, Destination, Review
+from django.core.exceptions import ValidationError
+
 
 class InfoRequestForm(forms.ModelForm):
     class Meta:
@@ -51,7 +53,30 @@ from django import forms
 from .models import Usuario
 
 class UsuarioForm(forms.ModelForm):
+    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repite la contraseña', widget=forms.PasswordInput)
+
     class Meta:
         model = Usuario
-        fields = ['nombre', 'apellidos', 'telefono', 'email', 'lugar_residencia']
+        fields = ['name', 'apellidos', 'telefono', 'email']
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        # Asumiendo que Usuario es un modelo que extiende a User o tiene un campo email único
+        if Usuario.objects.filter(email=email).exists():
+            raise ValidationError("Este correo electrónico ya está registrado.")
+        return email
+
+    def clean_password2(self):
+        password = self.cleaned_data['password']
+        password2 = self.cleaned_data['password2']
+        if password != password2:
+            raise ValidationError("Las contraseñas no coinciden.")
+        return password2
+
+    def save(self, commit=True):
+        usuario = super().save(commit=False)
+        usuario.set_password(self.cleaned_data['password'])
+        if commit:
+            usuario.save()
+        return usuario
