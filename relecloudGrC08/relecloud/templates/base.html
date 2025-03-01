@@ -10,9 +10,21 @@
         ReleCloud - Expand your horizons
         {% endblock %}
     </title>
+    <style>
+        {% if request.path == '/' %}
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Bloquea el scroll */
+            position: fixed; /* Fija la pantalla */
+        }
+        {% endif %}
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-translucent-secondary">
+    {% comment %} <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-translucent-secondary">
         <img src="{% static 'res/img/small-logo.png' %}" width="60" height="auto" alt="Rocket ship logo" />
         <a class="navbar-brand tk-elevon" href="{% url 'index' %}">&nbsp; ReleCloud Space Tourism</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
@@ -37,22 +49,34 @@
                 </li>
             </ul>
         </div>
-    </nav>
+    </nav> {% endcomment %}
 
     <main role="main">
-        <div class="main-header" style="background-image: url('{% static "res/img/cosmos-db.jpeg" %}'); background-size: cover;">
-            <div class="container">
+        <div class="main-header" style="position: relative; background-image: url('{% static "res/img/priego.jpg" %}'); background-size: cover; height: 100vh; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);"></div>
+            <div class="container" style="position: relative; z-index: 1;">
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="{% static 'res/img/bit_cosmos.png' %}" class="img img-fluid" />
+                        <img src="{% static 'res/img/image.png' %}" class="img img-fluid" />
                     </div>
-                    <div class="col-md-8 ml-md-auto align-self-center">
-                        <h1 class="display-1">Expand your horizons</h1>
+                    <div class="col-md-8 ml-md-auto align-self-center text-center">
+                        
+                        {% if request.path == '/' %}
+                            <h1 class="display-1 text-white">Inicio de sesión</h1>
+                            <div class="mt-4">
+                                <a href="#" class="btn btn-primary btn-lg">Iniciar sesión</a>
+                                <a href="{% url 'Registro'%}" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
+                            </div>
+                        {% else %}
+                            <h1 class="display-1 text-white">Be Rural</h1>
+                        {% endif %}
+    
                     </div>
                 </div>
             </div>
         </div>
-
+    </main>
+    {% if request.path != '/' %}
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{message.tags}}" role="alert">
@@ -77,10 +101,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </main>
-
-    <footer class="container">
-        <p>&copy; Microsoft 2021</p>
-    </footer>
-</body>
+   </body>
 </html>

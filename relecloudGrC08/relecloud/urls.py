@@ -12,4 +12,5 @@ urlpatterns = [
     path('cruise/<int:pk>/', views.CruiseDetailView.as_view(), name='cruise_detail'),
     path('info_request/', views.InfoRequestCreate.as_view(), name='info_request'),
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
+    path('Registro/', views.InfoRequestCreate.as_view(), name='Registro')
 ]
