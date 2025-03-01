@@ -92,14 +92,19 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
+from django.contrib.auth.hashers import make_password
+
 class Usuario(models.Model):
     name = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
-    email = models.EmailField()
-    lugar_residencia = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        # Asegúrate de hashear la contraseña antes de guardar el usuario
+        self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} {self.apellidos}"
-
-

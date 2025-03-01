@@ -181,12 +181,10 @@ def add_review(request, pk, model_type):
 
 class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
     model = models.Usuario
+    form_class = UsuarioForm  # Usar el formulario personalizado
     template_name = 'Registro.html'
     success_url = reverse_lazy('index')  # Redirigir a 'index' tras un registro exitoso
     success_message = "Tu cuenta ha sido registrada con éxito. ¡Gracias por unirte!"
-
-    fields = ['name', 'apellidos', 'telefono', 'email', 'lugar_residencia']
-    success_message = 'Te hemos enviado un correo'
 
     def form_valid(self, form):
         # Lógica para enviar correo electrónico después de un registro exitoso
