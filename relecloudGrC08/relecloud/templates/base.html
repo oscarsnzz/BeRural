@@ -10,6 +10,18 @@
         ReleCloud - Expand your horizons
         {% endblock %}
     </title>
+    <style>
+        {% if request.path == '/' %}
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Bloquea el scroll */
+            position: fixed; /* Fija la pantalla */
+        }
+        {% endif %}
+    </style>
 </head>
 <body>
     {% comment %} <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-translucent-secondary">
@@ -36,27 +48,31 @@
     </nav> {% endcomment %}
 
     <main role="main">
-        <div class="main-header" style="position: relative; background-image: url('{% static "res/img/priego.jpg" %}'); background-size: cover;">
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5 );"></div>
+        <div class="main-header" style="position: relative; background-image: url('{% static "res/img/priego.jpg" %}'); background-size: cover; height: 100vh; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);"></div>
             <div class="container" style="position: relative; z-index: 1;">
                 <div class="row">
                     <div class="col-md-4">
                         <img src="{% static 'res/img/image.png' %}" class="img img-fluid" />
                     </div>
-                    <div class="col-md-8 ml-md-auto align-self-center">
-                        <h1 class="display-1">Inicio de sesión</h1>
-                        <div class="mt-4">
-                            <a href="" class="btn btn-primary btn-lg">Iniciar sesión</a>
-                            <a href="" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
-                        </div>
+                    <div class="col-md-8 ml-md-auto align-self-center text-center">
+                        
+                        {% if request.path == '/' %}
+                            <h1 class="display-1 text-white">Inicio de sesión</h1>
+                            <div class="mt-4">
+                                <a href="#" class="btn btn-primary btn-lg">Iniciar sesión</a>
+                                <a href="#" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
+                            </div>
+                        {% else %}
+                            <h1 class="display-1 text-white">Be Rural</h1>
+                        {% endif %}
+    
                     </div>
                 </div>
             </div>
-            
         </div>
     </main>
-    
-
+    {% if request.path != '/' %}
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{message.tags}}" role="alert">
@@ -81,6 +97,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </main>
    </body>
 </html>
