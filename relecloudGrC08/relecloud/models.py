@@ -43,8 +43,6 @@ class Cruise(models.Model):
     def get_absolute_url(self):
         return reverse("cruise_detail", kwargs={"pk": self.pk})
     
-
-
 class InfoRequest(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
     email = models.EmailField()
@@ -53,6 +51,7 @@ class InfoRequest(models.Model):
         Cruise,
         on_delete=models.PROTECT
     )
+
 
 
 class Review(models.Model):
@@ -94,10 +93,13 @@ class Review(models.Model):
 
 
 class Usuario(models.Model):
-    nombre = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
     email = models.EmailField()
     lugar_residencia = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.name} {self.apellidos}"
 
 

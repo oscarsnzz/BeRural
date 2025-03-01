@@ -23,3 +23,10 @@ class InfoRequestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Review)
+
+
+@admin.register(models.Usuario)  # Utiliza el decorador para registrar el modelo
+class UsuarioAdmin(admin.ModelAdmin):
+    list_display = ('name', 'apellidos', 'telefono', 'email', 'lugar_residencia')  # Campos que quieres mostrar en la lista
+    list_filter = ('lugar_residencia',)  # Filtros disponibles en la barra lateral
+    search_fields = ('name', 'apellidos', 'email')  # Campos por los que se puede buscar

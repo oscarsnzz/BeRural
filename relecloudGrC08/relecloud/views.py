@@ -120,7 +120,7 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
         response = super().form_valid(form)
         # Enviar el correo electrónico
         send_mail(
-            subject=f'Solicitud de información para {form.instance.cruise}',
+            subject=f'Muchas gracias {form.instance.name}',
             message=(
                 f"Gracias, {form.instance.name}, por tu Registro.\n\n"
                 f"Tu cuenta ha sido registrada con exito "
@@ -152,6 +152,7 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
 #             review.save()
 #             return redirect(related_model.get_absolute_url())
 #     return redirect('/')
+
 def add_review(request, pk, model_type):
         if model_type == 'destination':
             related_model = get_object_or_404(Destination, pk=pk)
@@ -176,14 +177,25 @@ def add_review(request, pk, model_type):
         return redirect('/')
 
 
-from .forms import UsuarioForm
 
-def registrar_usuario(request):
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('index')  # Asumiendo que 'index' es una URL válida
-    else:
-        form = UsuarioForm()
-    return render(request, 'Registro.html', {'form': form})  # Cambia aquí si es necesario, por ahora no lo es
+
+class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
+    model = models.Usuario
+    template_name = 'Registro.html'
+    success_url = reverse_lazy('index')  # Redirigir a 'index' tras un registro exitoso
+    success_message = "Tu cuenta ha sido registrada con éxito. ¡Gracias por unirte!"
+
+    fields = ['name', 'apellidos', 'telefono', 'email', 'lugar_residencia']
+    success_message = 'Te hemos enviado un correo'
+
+    def form_valid(self, form):
+        # Lógica para enviar correo electrónico después de un registro exitoso
+        response = super().form_valid(form)
+        send_mail(
+            subject=f"Bienvenido a la plataforma, {form.instance.name}",
+            message=f"Hola, {form.instance.name}!\n\nTu cuenta ha sido registrada con éxito.\nGracias por usar nuestra aplicación.",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[form.instance.email],
+            fail_silently=False,
+        )
+        return response
