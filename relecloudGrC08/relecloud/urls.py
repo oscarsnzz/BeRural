@@ -13,5 +13,5 @@ urlpatterns = [
     path('info_request/', views.InfoRequestCreate.as_view(), name='info_request'),
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
-    path('login/', views.UsuarioLoginView.as_view() , name='login'),
+    path('login/', views.login_view , name='login'),
 ]
