@@ -64,7 +64,7 @@
                         {% if request.path == '/' %}
                             <h1 class="display-1 text-white">Inicio de sesión</h1>
                             <div class="mt-4">
-                                <a href="#" class="btn btn-primary btn-lg">Iniciar sesión</a>
+                                <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Iniciar sesión</a>
                                 <a href="{% url 'Registro' %}" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
                             </div>
                         {% else %}

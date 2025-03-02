@@ -197,3 +197,29 @@ class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
             fail_silently=False,
         )
         return response
+    
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from .forms import LoginForm
+
+class UsuarioLoginView(generic.FormView):
+    form_class = LoginForm  # Usa el formulario de inicio de sesión personalizado
+    template_name = 'login_form.html'
+    success_url = reverse_lazy('index')  # Redirige a 'index' después de un inicio de sesión exitoso
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        usuario = authenticate(self.request, username=email, password=password)  # Asegúrate de que el modelo Usuario use 'email' como USERNAME_FIELD si es necesario.
+
+        if usuario is not None:
+            login(self.request, usuario)
+            messages.success(self.request, "Inicio de sesión exitoso. ¡Bienvenido de nuevo!")
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, "Correo electrónico o contraseña incorrecta.")
+            return redirect('login')  # Cambia 'login' por el nombre de ruta que corresponda al login.
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error en el formulario. Por favor corrige los errores e intenta de nuevo.")
+        return super().form_invalid(form)
