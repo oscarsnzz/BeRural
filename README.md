@@ -24,7 +24,7 @@ Be Rural es una Web App desarrollada en Django como parte de la asignatura Proye
 
 - 🎨 Frontend: HTML, CSS, JavaScript
 
-- 🗄️ Base de Datos: PostgreSQL / SQLite
+- 🗄️ Base de Datos: PostgreSQL
 
 
 ## 🏗️ Instalación
