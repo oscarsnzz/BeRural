@@ -103,7 +103,7 @@ class Usuario(models.Model):
     password = models.CharField(max_length=128)  # Almacenar las contraseñas encriptadas
 
     def save(self, *args, **kwargs):
-        self.password = make_password(self.password)  # Encriptar la contraseña
+        self.password = (self.password)  # Encriptar la contraseña
         super().save(*args, **kwargs)  # Llamar al método save del padre para guardar en la base de datos
 
     def __str__(self):

@@ -14,4 +14,6 @@ urlpatterns = [
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
     path('login/', views.login_view , name='login'),
+    path('Pueblos/', views.pueblos, name='pueblos'),
+
 ]
