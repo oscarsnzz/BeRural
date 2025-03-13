@@ -205,7 +205,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
 def login_view(request):
-    success_url = reverse_lazy('index')  # Redirigir a 'index' tras un registro exitoso
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -213,7 +212,7 @@ def login_view(request):
             usuario = authenticate(request, username=email, password=password)
             if usuario is not None:
                 login(request, usuario)
-                return redirect('/Pueblos')
+                return redirect(request, 'Pueblos_Principal.html')
             else:
                 # Considera enviar el formulario de nuevo con un mensaje de error.
                 return render(request, 'login_form.html', {
@@ -229,4 +228,22 @@ def login_view(request):
     return render(request, 'login_form.html')
 
 def pueblos(request):
-    return render(request, 'Pueblos_Principal.html')
+    show_all = request.GET.get('show_all', 'false') == 'true'  # Leer parámetro de URL
+    all_destinations = Destination.objects.annotate(average_rating=Avg('reviews__rating'))
+    if show_all:
+        destinations_list = all_destinations
+    else:
+        # Filtrar y ordenar por la valoración promedio de mayor a menor
+        destinations_list = all_destinations.filter(average_rating__isnull=False).order_by('-average_rating')[:3]
+
+    # Preparar las estrellas para cada destino
+    for destination in destinations_list:
+        full_stars = int(destination.average_rating or 0)
+        empty_stars = 5 - full_stars
+        destination.stars_full = range(full_stars)
+        destination.stars_empty = range(empty_stars)
+
+    return render(request, 'Pueblos_Principal.html', {
+        'destinations': destinations_list,
+        'show_all': show_all,
+    })

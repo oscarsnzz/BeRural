@@ -108,3 +108,27 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.apellidos}"
+
+class Pueblos(models.Model):
+    name = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    description = models.TextField(max_length=2000, null=False, blank=False)
+    image = models.ImageField(
+        upload_to='pueblos/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("destination_detail", kwargs={"pk": self.pk})
+
+    def has_image(self):
+        """Check if the destination has an image."""
+        return bool(self.image)
+
+    def calculate_popularity(self):
+        """Calcula la popularidad basada en el promedio de las valoraciones."""
+        average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
+        return average_rating
