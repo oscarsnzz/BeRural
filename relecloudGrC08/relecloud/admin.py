@@ -1,5 +1,7 @@
 from django.contrib import admin
 from . import models
+from django.contrib import admin
+from .models import Pueblo  # Importa el modelo
 
 # Personalizamos la visualización de Destination en el panel de administración
 @admin.register(models.Destination)
@@ -29,3 +31,10 @@ admin.site.register(models.Review)
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('name', 'apellidos', 'telefono', 'email', 'password')  # Campos que quieres mostrar en la lista
     search_fields = ('name', 'apellidos', 'email')  # Campos por los que se puede buscar
+
+
+@admin.register(Pueblo)
+class PuebloAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'ubicacion', 'habitantes', 'valoracion')  # Campos visibles en el panel
+    search_fields = ('nombre', 'ubicacion')  # Habilitar búsqueda
+

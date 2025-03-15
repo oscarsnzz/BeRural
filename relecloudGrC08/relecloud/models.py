@@ -1,8 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
@@ -30,7 +28,6 @@ class Destination(models.Model):
         average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
         return average_rating
 
-
 class Cruise(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
     description = models.TextField(max_length=2000, null=False, blank=False)
@@ -53,8 +50,6 @@ class InfoRequest(models.Model):
         Cruise,
         on_delete=models.PROTECT
     )
-
-
 
 class Review(models.Model):
     RATING_CHOICES = [(i, i) for i in range(1, 5)]  # Ratings from 1 to 5
@@ -93,15 +88,13 @@ class Review(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-
-
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('El email es obligatorio')
         email = self.normalize_email(email)
         usuario = self.model(email=email, **extra_fields)
-        usuario.password = password  # Guardar la contraseña en texto plano
+        usuario.set_password(password)  # Guardar la contraseña encriptada
         usuario.save(using=self._db)
         return usuario
 
@@ -125,26 +118,24 @@ class Usuario(AbstractBaseUser):
     def __str__(self):
         return self.email
 
-class Pueblos(models.Model):
-    name = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    description = models.TextField(max_length=2000, null=False, blank=False)
-    image = models.ImageField(
-        upload_to='pueblos/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
-        null=True,
-        blank=True
-    )
+class ImagenPueblo(models.Model):
+    pueblo = models.ForeignKey('Pueblo', related_name="imagenes_relacionadas", on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to="pueblos/")
 
     def __str__(self):
-        return self.name
+        return f"Imagen de {self.pueblo.nombre}"
 
-    def get_absolute_url(self):
-        return reverse("destination_detail", kwargs={"pk": self.pk})
+class Pueblo(models.Model):
+    nombre = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    ubicacion = models.CharField(max_length=255)
+    habitantes = models.IntegerField()
+    valoracion = models.FloatField()
+    num_valoraciones = models.IntegerField(default=0)
+    descripcion = models.TextField()
+    servicios = models.TextField()
+    actividades = models.TextField()
+    incentivos = models.TextField()
+    imagenes = models.ManyToManyField(ImagenPueblo, related_name='pueblo_imagenes')
 
-    def has_image(self):
-        """Check if the destination has an image."""
-        return bool(self.image)
-
-    def calculate_popularity(self):
-        """Calcula la popularidad basada en el promedio de las valoraciones."""
-        average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
-        return average_rating
+    def __str__(self):
+        return self.nombre

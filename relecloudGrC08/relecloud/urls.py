@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import pueblo_detalle
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -15,5 +16,5 @@ urlpatterns = [
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
     path('login/', views.login_view , name='login'),
     path('pueblos/', views.pueblos, name='pueblos_principal'),
-
+    path('pueblo/<int:pueblo_id>/', pueblo_detalle, name='pueblo_detalle'),
 ]

@@ -105,10 +105,11 @@
                                 <h4>${pueblo.name}</h4>
                                 <p><strong>Ubicación:</strong> ${pueblo.ubicacion}</p>
                                 <p><strong>Habitantes:</strong> ${pueblo.habitantes}</p>
-                                <p><strong>Servicios básicos:</strong> ${pueblo.servicios}</p>
+                                <a href="/pueblo/${pueblo.id}/" class="btn">Ver más detalles</a>
                             </div>
                         `);
                 });
+
             } else {
                 console.warn("No hay pueblos registrados o los datos no están cargando correctamente.");
             }

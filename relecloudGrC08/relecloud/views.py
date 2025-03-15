@@ -189,7 +189,7 @@ def login_view(request):
     return render(request, 'login_form.html')
 
 from django.shortcuts import render
-from .models import Pueblos
+from .models import Pueblo
 
 def pueblos(request):
     show_all = request.GET.get('show_all', 'false') == 'true'
@@ -205,7 +205,7 @@ def pueblos(request):
         destination.stars_full = range(full_stars)
         destination.stars_empty = range(empty_stars)
     
-    pueblos_list = Pueblos.objects.all()  # Obtener todos los pueblos
+    pueblos_list = Pueblo.objects.all()  # Obtener todos los pueblos
     return render(request, 'Pueblos_Principal.html', {'pueblos': pueblos_list})
 
 
@@ -213,3 +213,11 @@ def pueblos(request):
         'destinations': destinations_list,
         'show_all': show_all,
     })
+
+from django.shortcuts import render, get_object_or_404
+from .models import Pueblo  # Nombre correcto del modelo
+
+
+def pueblo_detalle(request, pueblo_id):
+    pueblo = get_object_or_404(Pueblo, id=pueblo_id)
+    return render(request, 'pueblo_detail.html', {'pueblo': pueblo})
