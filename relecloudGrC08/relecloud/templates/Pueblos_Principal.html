@@ -1,6 +1,6 @@
-
 {% block content %}
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,6 +9,7 @@
     <title>Catálogo de Pueblos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,7 +72,7 @@
 </head>
 <body>
     <div class="navbar">
-      <img src="{% static 'res/img/image.png' %}" class="img img-fluid" alt="Be Rural"/>
+        <img src="{% static 'res/img/image.png' %}" class="img img-fluid" alt="Be Rural"/>
         <input type="text" class="search-bar" placeholder="Buscar pueblos...">
     </div>
 
@@ -86,26 +87,36 @@
         <a href="#"><i class="fas fa-user"></i>Perfil</a>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([40.4168, -3.7038], 6); // Madrid como punto central
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        // Agregar marcadores de pueblos registrados
-        var pueblos = [
-            { lat: 40.42, lng: -3.70, name: "Madrid" },
-            { lat: 41.38, lng: 2.17, name: "Barcelona" }
-        ];
-
-        pueblos.forEach(function(pueblo) {
-            L.marker([pueblo.lat, pueblo.lng])
-                .addTo(map)
-                .bindPopup(pueblo.name);
+        document.addEventListener("DOMContentLoaded", function() {
+            var map = L.map('map').setView([40.4168, -3.7038], 6); // Madrid como punto central
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+    
+            // Verifica que la variable pueblos tiene datos antes de intentar cargar los marcadores
+            if (typeof pueblos !== 'undefined' && pueblos.length > 0) {
+                pueblos.forEach(function(pueblo) {
+                    L.marker([pueblo.lat, pueblo.lng])
+                        .addTo(map)
+                        .bindPopup(`
+                            <div class="info-box">
+                                <h4>${pueblo.name}</h4>
+                                <p><strong>Ubicación:</strong> ${pueblo.ubicacion}</p>
+                                <p><strong>Habitantes:</strong> ${pueblo.habitantes}</p>
+                                <p><strong>Servicios básicos:</strong> ${pueblo.servicios}</p>
+                            </div>
+                        `);
+                });
+            } else {
+                console.warn("No hay pueblos registrados o los datos no están cargando correctamente.");
+            }
         });
     </script>
+    
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </body>
 </html>
 
