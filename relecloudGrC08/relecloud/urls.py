@@ -17,4 +17,5 @@ urlpatterns = [
     path('login/', views.login_view , name='login'),
     path('pueblos/', views.pueblos, name='pueblos_principal'),
     path('pueblo/<int:pueblo_id>/', pueblo_detalle, name='pueblo_detalle'),
+    path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
 ]

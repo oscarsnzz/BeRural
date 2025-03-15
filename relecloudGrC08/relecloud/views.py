@@ -208,12 +208,6 @@ def pueblos(request):
     pueblos_list = Pueblo.objects.all()  # Obtener todos los pueblos
     return render(request, 'Pueblos_Principal.html', {'pueblos': pueblos_list})
 
-
-    return render(request, 'Pueblos_Principal.html', {
-        'destinations': destinations_list,
-        'show_all': show_all,
-    })
-
 from django.shortcuts import render, get_object_or_404
 from .models import Pueblo  # Nombre correcto del modelo
 
@@ -221,3 +215,14 @@ from .models import Pueblo  # Nombre correcto del modelo
 def pueblo_detalle(request, pueblo_id):
     pueblo = get_object_or_404(Pueblo, id=pueblo_id)
     return render(request, 'pueblo_detail.html', {'pueblo': pueblo})
+
+from django.shortcuts import render
+from .models import Pueblo
+
+def pueblos_por_comunidad(request, comunidad_id):
+    pueblos = Pueblo.objects.filter(comunidad=comunidad_id)
+
+    return render(request, 'pueblos_por_comunidad.html', {
+        'pueblos': pueblos,
+        'comunidad_id': comunidad_id
+    })

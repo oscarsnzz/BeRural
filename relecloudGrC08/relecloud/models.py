@@ -51,6 +51,42 @@ class InfoRequest(models.Model):
         on_delete=models.PROTECT
     )
 
+
+## LO DE PUEBLOS 
+
+class Pueblo(models.Model):
+    name = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    ubicacion = models.CharField(max_length=255)
+    habitantes = models.IntegerField()
+    descripcion = models.TextField()
+    servicios = models.TextField()
+    actividades = models.TextField()
+    incentivos = models.TextField()
+    image = models.ImageField(
+        upload_to='destinations/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
+        null=True,
+        blank=True
+    )
+    comunidad = models.CharField(max_length=50)  # Campo para identificar la comunidad
+    
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("destination_detail", kwargs={"pk": self.pk})
+
+    def has_image(self):
+        """Check if the destination has an image."""
+        return bool(self.image)
+
+    def calculate_popularity(self):
+        """Calcula la popularidad basada en el promedio de las valoraciones."""
+        average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
+        return average_rating
+
+
+
+
 class Review(models.Model):
     RATING_CHOICES = [(i, i) for i in range(1, 5)]  # Ratings from 1 to 5
 
@@ -66,6 +102,14 @@ class Review(models.Model):
         on_delete=models.CASCADE, 
         related_name='reviews', 
         null=True, 
+        blank=True
+    )
+
+    pueblo = models.ForeignKey(
+        Pueblo,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=True,
         blank=True
     )
     author = models.CharField(max_length=255, null=False, blank=False, default="Anonymus")
@@ -117,25 +161,3 @@ class Usuario(AbstractBaseUser):
 
     def __str__(self):
         return self.email
-
-class ImagenPueblo(models.Model):
-    pueblo = models.ForeignKey('Pueblo', related_name="imagenes_relacionadas", on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to="pueblos/")
-
-    def __str__(self):
-        return f"Imagen de {self.pueblo.nombre}"
-
-class Pueblo(models.Model):
-    nombre = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    ubicacion = models.CharField(max_length=255)
-    habitantes = models.IntegerField()
-    valoracion = models.FloatField()
-    num_valoraciones = models.IntegerField(default=0)
-    descripcion = models.TextField()
-    servicios = models.TextField()
-    actividades = models.TextField()
-    incentivos = models.TextField()
-    imagenes = models.ManyToManyField(ImagenPueblo, related_name='pueblo_imagenes')
-
-    def __str__(self):
-        return self.nombre
