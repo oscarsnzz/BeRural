@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
 class Destination(models.Model):
@@ -28,7 +28,6 @@ class Destination(models.Model):
         average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
         return average_rating
 
-
 class Cruise(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
     description = models.TextField(max_length=2000, null=False, blank=False)
@@ -51,8 +50,6 @@ class InfoRequest(models.Model):
         Cruise,
         on_delete=models.PROTECT
     )
-
-
 
 class Review(models.Model):
     RATING_CHOICES = [(i, i) for i in range(1, 5)]  # Ratings from 1 to 5
@@ -91,20 +88,54 @@ class Review(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El email es obligatorio')
+        email = self.normalize_email(email)
+        usuario = self.model(email=email, **extra_fields)
+        usuario.set_password(password)  # Guardar la contraseña encriptada
+        usuario.save(using=self._db)
+        return usuario
 
-from django.db import models
-from django.contrib.auth.hashers import make_password
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
 
-class Usuario(models.Model):
+class Usuario(AbstractBaseUser):
     name = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
-    email = models.EmailField(unique=True)  # Asegúrate de que el correo sea único
-    password = models.CharField(max_length=128)  # Almacenar las contraseñas encriptadas
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
 
-    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)  # Encriptar la contraseña
-        super().save(*args, **kwargs)  # Llamar al método save del padre para guardar en la base de datos
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'apellidos']
+
+    objects = UsuarioManager()
 
     def __str__(self):
-        return f"{self.name} {self.apellidos}"
+        return self.email
+
+class ImagenPueblo(models.Model):
+    pueblo = models.ForeignKey('Pueblo', related_name="imagenes_relacionadas", on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to="pueblos/")
+
+    def __str__(self):
+        return f"Imagen de {self.pueblo.nombre}"
+
+class Pueblo(models.Model):
+    nombre = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    ubicacion = models.CharField(max_length=255)
+    habitantes = models.IntegerField()
+    valoracion = models.FloatField()
+    num_valoraciones = models.IntegerField(default=0)
+    descripcion = models.TextField()
+    servicios = models.TextField()
+    actividades = models.TextField()
+    incentivos = models.TextField()
+    imagenes = models.ManyToManyField(ImagenPueblo, related_name='pueblo_imagenes')
+
+    def __str__(self):
+        return self.nombre

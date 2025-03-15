@@ -1,0 +1,124 @@
+{% block content %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Pueblos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        .search-bar {
+            flex-grow: 1;
+            max-width: 300px;
+            padding: 5px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        #map {
+            width: 90%;
+            height: 400px;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .bottom-nav a {
+            text-decoration: none;
+            color: black;
+            text-align: center;
+            font-size: 14px;
+        }
+        .bottom-nav i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="{% static 'res/img/image.png' %}" class="img img-fluid" alt="Be Rural"/>
+        <input type="text" class="search-bar" placeholder="Buscar pueblos...">
+    </div>
+
+    <div class="container">
+        <h2>Catálogo de pueblos</h2>
+        <div id="map"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#"><i class="fas fa-home"></i>Inicio</a>
+        <a href="#"><i class="fas fa-comments"></i>Chats</a>
+        <a href="#"><i class="fas fa-user"></i>Perfil</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var map = L.map('map').setView([40.4168, -3.7038], 6); // Madrid como punto central
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+    
+            // Verifica que la variable pueblos tiene datos antes de intentar cargar los marcadores
+            if (typeof pueblos !== 'undefined' && pueblos.length > 0) {
+                pueblos.forEach(function(pueblo) {
+                    L.marker([pueblo.lat, pueblo.lng])
+                        .addTo(map)
+                        .bindPopup(`
+                            <div class="info-box">
+                                <h4>${pueblo.name}</h4>
+                                <p><strong>Ubicación:</strong> ${pueblo.ubicacion}</p>
+                                <p><strong>Habitantes:</strong> ${pueblo.habitantes}</p>
+                                <a href="/pueblo/${pueblo.id}/" class="btn">Ver más detalles</a>
+                            </div>
+                        `);
+                });
+
+            } else {
+                console.warn("No hay pueblos registrados o los datos no están cargando correctamente.");
+            }
+        });
+    </script>
+    
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</body>
+</html>
+
+{% endblock %}

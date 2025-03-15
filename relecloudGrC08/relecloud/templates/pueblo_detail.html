@@ -1,0 +1,74 @@
+{% block content %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pueblo.nombre }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+        .gallery {
+            display: flex;
+            overflow-x: scroll;
+            padding: 10px;
+            background: #fff;
+        }
+        .gallery img {
+            height: 200px;
+            margin-right: 10px;
+            border-radius: 10px;
+        }
+        .details {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            text-align: left;
+            max-width: 500px;
+            margin: auto;
+        }
+        .details h2 {
+            margin-bottom: 10px;
+        }
+        .contact-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #8B7E66;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        {% for imagen in pueblo.imagenes.all %}
+            <img src="{{ imagen.url }}" alt="{{ pueblo.nombre }}">
+        {% endfor %}
+    </div>
+
+    <div class="details">
+        <h2>{{ pueblo.nombre }}</h2>
+        <p><strong>Ubicación:</strong> {{ pueblo.ubicacion }}</p>
+        <p><strong>Valoraciones:</strong> ⭐ {{ pueblo.valoracion }} ({{ pueblo.num_valoraciones }} opiniones)</p>
+        <p><strong>Habitantes:</strong> {{ pueblo.habitantes }}</p>
+        <p><strong>Servicios básicos:</strong> {{ pueblo.servicios }}</p>
+        <p><strong>Descripción:</strong> {{ pueblo.descripcion }}</p>
+        <a href="#" class="contact-btn">Contactar</a>
+    </div>
+</body>
+</html>
+
+{% endblock %}
