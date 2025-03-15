@@ -180,7 +180,7 @@ def login_view(request):
             usuario = Usuario.objects.get(email=email)
             if usuario.password == password:  # Comparación en texto plano
                 login(request, usuario)  # Iniciar sesión manualmente
-                return redirect('pueblos')  # Redirigir a la vista correcta
+                return redirect('pueblos_principal')  # Redirigir a la vista correcta
             else:
                 return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
         except Usuario.DoesNotExist:
