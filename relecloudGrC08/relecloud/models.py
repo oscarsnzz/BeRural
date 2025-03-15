@@ -1,7 +1,9 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.db import models
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
 class Destination(models.Model):
@@ -92,22 +94,36 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 
-from django.db import models
-from django.contrib.auth.hashers import make_password
 
-class Usuario(models.Model):
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El email es obligatorio')
+        email = self.normalize_email(email)
+        usuario = self.model(email=email, **extra_fields)
+        usuario.password = password  # Guardar la contraseña en texto plano
+        usuario.save(using=self._db)
+        return usuario
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+
+class Usuario(AbstractBaseUser):
     name = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
-    email = models.EmailField(unique=True)  # Asegúrate de que el correo sea único
-    password = models.CharField(max_length=128)  # Almacenar las contraseñas encriptadas
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
 
-    def save(self, *args, **kwargs):
-        self.password = (self.password)  # Encriptar la contraseña
-        super().save(*args, **kwargs)  # Llamar al método save del padre para guardar en la base de datos
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'apellidos']
+
+    objects = UsuarioManager()
 
     def __str__(self):
-        return f"{self.name} {self.apellidos}"
+        return self.email
 
 class Pueblos(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
