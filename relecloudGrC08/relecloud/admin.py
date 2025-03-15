@@ -3,6 +3,13 @@ from . import models
 from django.contrib import admin
 from .models import Pueblo  # Importa el modelo
 
+from django.contrib import admin
+from .models import Pueblo, ImagenPueblo
+
+admin.site.register(Pueblo)
+admin.site.register(ImagenPueblo)
+
+
 # Personalizamos la visualización de Destination en el panel de administración
 @admin.register(models.Destination)
 class DestinationAdmin(admin.ModelAdmin):
