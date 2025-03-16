@@ -123,12 +123,11 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
         return response
 
 def add_review(request, pk, model_type):
-    if model_type == 'destination':
-        related_model = get_object_or_404(Destination, pk=pk)
-    elif model_type == 'cruise':
-        related_model = get_object_or_404(models.Cruise, pk=pk)
+    
+    if model_type == 'pueblo':
+        related_model = get_object_or_404(models.Pueblo, pk=pk)
     else:
-        return redirect('/')
+        return redirect('/pueblos/')
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -137,13 +136,13 @@ def add_review(request, pk, model_type):
             if rating < 1 or rating > 5:
                 return redirect(related_model.get_absolute_url())
             review = form.save(commit=False)
-            if model_type == 'destination':
-                review.destination = related_model
-            elif model_type == 'cruise':
-                review.cruise = related_model
+            
+            if model_type == 'pueblo':   
+                review.pueblo = related_model
+
             review.save()
             return redirect(related_model.get_absolute_url())
-    return redirect('/')
+    return redirect('/pueblos')
 
 class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
     model = models.Usuario
@@ -208,21 +207,54 @@ def pueblos(request):
     pueblos_list = Pueblo.objects.all()  # Obtener todos los pueblos
     return render(request, 'Pueblos_Principal.html', {'pueblos': pueblos_list})
 
-from django.shortcuts import render, get_object_or_404
-from .models import Pueblo  # Nombre correcto del modelo
 
+class PuebloDetailView(generic.DetailView):
+    template_name = 'pueblo_detail.html'
+    model = Pueblo
+    context_object_name = 'pueblo'
+    slug_field = "slug"  # Django buscará por este campo
+    slug_url_kwarg = "slug"
 
-def pueblo_detalle(request, pueblo_id):
-    pueblo = get_object_or_404(Pueblo, id=pueblo_id)
-    return render(request, 'pueblo_detail.html', {'pueblo': pueblo})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pueblo = self.get_object()
+        
+        # Obtener todas las reseñas del pueblo
+        reviews = Review.objects.filter(pueblo=pueblo)
+        
+        # Calcular el promedio de las calificaciones
+        average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+
+        # Generar rangos para mostrar estrellas llenas y vacías
+        context['full_stars'] = range(int(average_rating))
+        context['empty_stars'] = range(5 - int(average_rating))
+        context['average_rating'] = average_rating
+
+        # Ajustar estrellas en cada reseña
+        for review in reviews:
+            review.full_stars = range(review.rating)
+            review.empty_stars = range(5 - review.rating)
+
+        context['reviews'] = reviews
+        context['review_form'] = ReviewForm()
+        return context
 
 from django.shortcuts import render
-from .models import Pueblo
+from .models import Pueblo, Comunidad
+
+# def pueblos_por_comunidad(request, comunidad_id):
+#     pueblos = Pueblo.objects.filter(comunidad=comunidad_id)
+
+#     return render(request, 'pueblos_por_comunidad.html', {
+#         'pueblos': pueblos,
+#         'comunidad_id': comunidad_id
+#     })
 
 def pueblos_por_comunidad(request, comunidad_id):
-    pueblos = Pueblo.objects.filter(comunidad=comunidad_id)
-
+    comunidad = get_object_or_404(Comunidad, id=comunidad_id)
+    pueblos = Pueblo.objects.filter(comunidad=comunidad)  # Obtener los pueblos de esa comunidad
+    
     return render(request, 'pueblos_por_comunidad.html', {
-        'pueblos': pueblos,
-        'comunidad_id': comunidad_id
+        'comunidad': comunidad,
+        'pueblos': pueblos
     })

@@ -54,6 +54,14 @@ class InfoRequest(models.Model):
 
 ## LO DE PUEBLOS 
 
+class Comunidad(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nombre
+    
+from django.utils.text import slugify
+
 class Pueblo(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
     ubicacion = models.CharField(max_length=255)
@@ -66,14 +74,25 @@ class Pueblo(models.Model):
         upload_to='destinations/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
         null=True,
         blank=True
+    )    
+    comunidad = models.ForeignKey(
+        Comunidad, 
+        on_delete=models.CASCADE, 
+        related_name='pueblos', 
     )
-    comunidad = models.CharField(max_length=50)  # Campo para identificar la comunidad
-    
+    slug = models.SlugField(unique=True, blank=True, null=True)  # Slug para URL
+
+
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse("destination_detail", kwargs={"pk": self.pk})
+    # def get_absolute_url(self):
+    #     return reverse("pueblo_detail", kwargs={"pk": self.pk})
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)  # Genera el slug a partir del nombre
+        super().save(*args, **kwargs)
 
     def has_image(self):
         """Check if the destination has an image."""
@@ -127,6 +146,8 @@ class Review(models.Model):
             return f'Review for Destination: {self.destination.name} - Rating: {self.rating}'
         elif self.cruise:
             return f'Review for Cruise: {self.cruise.name} - Rating: {self.rating}'
+        elif self.pueblo:
+            return f'Review for Pueblo: {self.pueblo.name} - Rating: {self.rating}'
         return 'Review'
 
     class Meta:

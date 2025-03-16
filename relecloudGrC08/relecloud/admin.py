@@ -29,7 +29,6 @@ class InfoRequestAdmin(admin.ModelAdmin):
     search_fields = ('name','email')
 
 
-admin.site.register(models.Review)
 
 
 @admin.register(models.Usuario)  # Utiliza el decorador para registrar el modelo
@@ -43,3 +42,4 @@ class PuebloAdmin(admin.ModelAdmin):
     list_display = ('name', 'ubicacion', 'habitantes')  # Campos visibles en el panel
     search_fields = ('name', 'ubicacion')  # Habilitar búsqueda
 
+admin.site.register(models.Review)
