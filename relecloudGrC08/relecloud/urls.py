@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from .views import pueblo_detalle
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -12,9 +11,11 @@ urlpatterns = [
     path('destination/<int:pk>/delete/', views.DestinationDeleteView.as_view(), name='destination_confirm_delete'),
     path('cruise/<int:pk>/', views.CruiseDetailView.as_view(), name='cruise_detail'),
     path('info_request/', views.InfoRequestCreate.as_view(), name='info_request'),
+    ##
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
     path('login/', views.login_view , name='login'),
     path('pueblos/', views.pueblos, name='pueblos_principal'),
-    path('pueblo/<int:pueblo_id>/', pueblo_detalle, name='pueblo_detalle'),
+    path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
+    path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
 ]

@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import os
 
 # Create your models here.
 class Destination(models.Model):
@@ -51,6 +52,62 @@ class InfoRequest(models.Model):
         on_delete=models.PROTECT
     )
 
+
+## LO DE PUEBLOS 
+
+class Comunidad(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nombre
+    
+
+from django.utils.text import slugify
+
+class Pueblo(models.Model):
+    name = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    ubicacion = models.CharField(max_length=255)
+    habitantes = models.IntegerField()
+    descripcion = models.TextField()
+    servicios = models.TextField()
+    actividades = models.TextField()
+    incentivos = models.TextField()
+    image = models.ImageField(
+        upload_to='destinations/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
+        null=True,
+        blank=True
+    )    
+    comunidad = models.ForeignKey(
+        Comunidad, 
+        on_delete=models.CASCADE, 
+        related_name='pueblos', 
+    )
+    slug = models.SlugField(unique=True, blank=True, null=True)  # Slug para URL
+
+
+    def __str__(self):
+        return self.name
+
+    # def get_absolute_url(self):
+    #     return reverse("pueblo_detail", kwargs={"pk": self.pk})
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)  # Genera el slug a partir del nombre
+        super().save(*args, **kwargs)
+
+    def has_image(self):
+        """Check if the destination has an image."""
+        return bool(self.image)
+
+    def calculate_popularity(self):
+        """Calcula la popularidad basada en el promedio de las valoraciones."""
+        average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
+        return average_rating
+
+
+
+
 class Review(models.Model):
     RATING_CHOICES = [(i, i) for i in range(1, 5)]  # Ratings from 1 to 5
 
@@ -68,6 +125,14 @@ class Review(models.Model):
         null=True, 
         blank=True
     )
+
+    pueblo = models.ForeignKey(
+        Pueblo,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=True,
+        blank=True
+    )
     author = models.CharField(max_length=255, null=False, blank=False, default="Anonymus")
     comment = models.TextField(null=True, blank=True)
     rating = models.IntegerField(
@@ -83,6 +148,8 @@ class Review(models.Model):
             return f'Review for Destination: {self.destination.name} - Rating: {self.rating}'
         elif self.cruise:
             return f'Review for Cruise: {self.cruise.name} - Rating: {self.rating}'
+        elif self.pueblo:
+            return f'Review for Pueblo: {self.pueblo.name} - Rating: {self.rating}'
         return 'Review'
 
     class Meta:
@@ -117,25 +184,3 @@ class Usuario(AbstractBaseUser):
 
     def __str__(self):
         return self.email
-
-class ImagenPueblo(models.Model):
-    pueblo = models.ForeignKey('Pueblo', related_name="imagenes_relacionadas", on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to="pueblos/")
-
-    def __str__(self):
-        return f"Imagen de {self.pueblo.nombre}"
-
-class Pueblo(models.Model):
-    nombre = models.CharField(max_length=255, unique=True, null=False, blank=False)
-    ubicacion = models.CharField(max_length=255)
-    habitantes = models.IntegerField()
-    valoracion = models.FloatField()
-    num_valoraciones = models.IntegerField(default=0)
-    descripcion = models.TextField()
-    servicios = models.TextField()
-    actividades = models.TextField()
-    incentivos = models.TextField()
-    imagenes = models.ManyToManyField(ImagenPueblo, related_name='pueblo_imagenes')
-
-    def __str__(self):
-        return self.nombre
