@@ -100,6 +100,9 @@ class Pueblo(models.Model):
         """Check if the destination has an image."""
         return bool(self.image)
 
+    def get_absolute_url(self):
+        return reverse("pueblo_detail", kwargs={"slug": self.slug})
+
     def calculate_popularity(self):
         """Calcula la popularidad basada en el promedio de las valoraciones."""
         average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
