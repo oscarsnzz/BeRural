@@ -18,4 +18,5 @@ urlpatterns = [
     path('pueblos/', views.pueblos, name='pueblos_principal'),
     path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
     path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
+
 ]
