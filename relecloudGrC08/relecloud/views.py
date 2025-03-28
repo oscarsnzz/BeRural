@@ -299,9 +299,32 @@ class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
         )
         return response
 
+
+from .forms import ChatMessageCreateForm
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import ChatGroup, GroupMessage
+from .forms import ChatMessageCreateForm
+
 @login_required
 def chat_view(request):
-    chat_group = get_object_or_404(ChatGroup, group_name = "public-chat")
-    chat_messages = chat_group.mensajes.all()[:30]  # Obtener los últimos 10 mensajes
-    return render(request, 'chat.html', {'chat_messages': chat_messages})
+    chat_group = get_object_or_404(ChatGroup, group_name="public-chat")
+    messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]  # Últimos 30, ordenados cronológicamente
+    form = ChatMessageCreateForm()
+
+    if request.method == 'POST':
+        form = ChatMessageCreateForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.author = request.user  # IMPORTANTE: debe ser .author, no .user
+            message.group = chat_group     # IMPORTANTE: group, no chat_group
+            message.save()
+            return redirect('chat')
+
+    return render(request, 'chat.html', {
+        'messages': messages,
+        'form': form,
+        'user': request.user
+    })
 
