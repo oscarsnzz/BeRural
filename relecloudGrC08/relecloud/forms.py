@@ -1,5 +1,5 @@
 from django import forms
-from .models import InfoRequest, Destination, Review, Usuario
+from .models import *
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
@@ -81,3 +81,15 @@ class LoginForm(forms.Form):
 
     def get_user(self):
         return self.cleaned_data.get('usuario')
+    
+class ChatMessageCreateForm(forms.ModelForm):
+    class Meta:
+        model = GroupMessage
+        fields = ['body']
+        widgets = {
+            'body': forms.TextInput(attrs={
+                'placeholder': 'Escribe tu mensaje...',
+                'class': 'w-4/5 rounded-xl p-2 text-black',
+                'autocomplete': 'off',
+            }),
+        }
