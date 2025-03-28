@@ -14,9 +14,10 @@ urlpatterns = [
     ##
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
-    path('login/', views.login_view , name='login'),
+    path('accounts/login/', views.login_view , name='login'),
     path('pueblos/', views.pueblos, name='pueblos_principal'),
     path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
     path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
+    path ('chat/', views.chat_view , name='chat'),
 
 ]

@@ -26,6 +26,13 @@ SECRET_KEY = "django-insecure-1ob-uoz1^jeo-l%ns4@9_i&81$6t%k7%3h(b4(oe6l19!x1@4#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = 'relecloud.Usuario'  # Ya que usas un modelo de usuario personalizado
+
+AUTHENTICATION_BACKENDS = [
+    'relecloud.backends.EmailBackend',  # el backend que acabamos de crear
+]
+
+
 ALLOWED_HOSTS = ['rodrigo-releclouud.azurewebsites.net','localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = ['https://rodrigo-releclouud.azurewebsites.net']

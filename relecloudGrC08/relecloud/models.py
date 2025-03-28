@@ -4,6 +4,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import os
 
+from django.db import models
+from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
+
 # Create your models here.
 class Destination(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False, blank=False)
@@ -158,29 +164,32 @@ class Review(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('El email es obligatorio')
         email = self.normalize_email(email)
         usuario = self.model(email=email, **extra_fields)
-        usuario.set_password(password)  # Guardar la contraseña encriptada
+        usuario.set_password(password)
         usuario.save(using=self._db)
         return usuario
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
         return self.create_user(email, password, **extra_fields)
-    
-    
 
-class Usuario(AbstractBaseUser):
+# El modelo Usuario corregido
+class Usuario(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'apellidos']
@@ -189,3 +198,34 @@ class Usuario(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+    
+    def delete(self, *args, **kwargs):
+        self.mensajes.all().delete()
+        super().delete(*args, **kwargs)
+
+
+
+class ChatGroup(models.Model):
+    group_name = models.CharField(max_length=128, unique=True)
+
+    def __str__(self):
+        return self.group_name
+    
+class GroupMessage(models.Model):
+    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name='mensajes')
+    body = models.CharField(max_length=300)
+    author = models.ForeignKey(
+    Usuario,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='mensajes'
+)
+
+    created = models.DateTimeField(auto_now_add=True)   
+
+    def __str__(self):
+        return f'{self.author.name} - {self.body}'
+    
+    class Meta:
+        ordering = ['created']  
