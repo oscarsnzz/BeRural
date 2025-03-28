@@ -29,8 +29,6 @@ class InfoRequestAdmin(admin.ModelAdmin):
     search_fields = ('name','email')
 
 
-
-
 @admin.register(models.Usuario)  # Utiliza el decorador para registrar el modelo
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('name', 'apellidos', 'telefono', 'email', 'password')  # Campos que quieres mostrar en la lista
