@@ -90,6 +90,22 @@
     .chat-input button:hover {
         background-color: #22c55e;
     }
+
+    .fade-in-up {
+        animation: fadeInUp 0.6s ease;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
 </style>
 
 <div class="chat-container">
@@ -99,21 +115,14 @@
 
     <div class="chat-messages" id="chat_container">
         {% for message in messages %}
-            {% if message.author == user %}
-            <div class="message me">
-                {{ message.body }}
-                <div class="author-info">Tú</div>
-            </div>
-            {% else %}
-            <div class="message other">
-                {{ message.body }}
-                <div class="author-info">{{ message.author.name }}</div>
-            </div>
-            {% endif %}
+        {% include 'chat_message.html' %}
         {% endfor %}
     </div>
 
-    <form method="POST" class="chat-input">
+    <form method="POST" class="chat-input"
+        hx-post="{% url 'chat' %}"
+        hx-target="#chat_container"
+        hx-swap="beforeend">
         {% csrf_token %}
         {{ form.body }}
         <button type="submit">Enviar</button>
@@ -121,4 +130,31 @@
     
     </div>
 </div>
+
+<script>
+    document.body.addEventListener('htmx:afterSwap', (e) => {
+        if (e.target.id === "chat_container") {
+            const newMessage = e.detail.target.lastElementChild;
+            newMessage.classList.remove('fade-in-up'); // por si acaso
+            void newMessage.offsetWidth; // truco para reiniciar la animación
+            newMessage.classList.add('fade-in-up');
+        }
+    });
+
+
+</script>
+
+<script src="https://unpkg.com/htmx.org@1.9.2"></script>
+<script>
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const form = document.querySelector('.chat-input');
+        if (form) {
+            form.reset();  // borra el campo input
+        }
+    });
+</script>
+
+
 {% endblock %}
+
+

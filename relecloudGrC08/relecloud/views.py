@@ -306,22 +306,30 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import ChatGroup, GroupMessage
 from .forms import ChatMessageCreateForm
-
 @login_required
 def chat_view(request):
     chat_group = get_object_or_404(ChatGroup, group_name="public-chat")
-    messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]  # Últimos 30, ordenados cronológicamente
-    form = ChatMessageCreateForm()
-
+    messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]
+    
     if request.method == 'POST':
         form = ChatMessageCreateForm(request.POST)
         if form.is_valid():
             message = form.save(commit=False)
-            message.author = request.user  # IMPORTANTE: debe ser .author, no .user
-            message.group = chat_group     # IMPORTANTE: group, no chat_group
+            message.author = request.user
+            message.group = chat_group
             message.save()
+
+            # 👉 Si el POST viene de HTMX, devolver solo el fragmento
+            if request.headers.get('HX-Request'):
+                return render(request, 'chat_message.html', {
+                    'message': message,
+                    'user': request.user,
+                    'just_added': True, # Para marcar el mensaje como nuevo
+                })
+
+            # 👉 Si es un POST normal, redirige
             return redirect('chat')
-        
+
     else:
         form = ChatMessageCreateForm()
 
@@ -330,4 +338,3 @@ def chat_view(request):
         'form': form,
         'user': request.user
     })
-
