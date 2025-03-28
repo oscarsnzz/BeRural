@@ -15,6 +15,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .models import Usuario
 from .models import Pueblo
+from .models import ChatGroup, GroupMessage
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -169,23 +171,47 @@ class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
         return response
 
 
-### LOGIN para los usuarios 
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+# ### LOGIN para los usuarios 
+# def login_view(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         usuario = authenticate (request, email=email, password=password)  # Autenticación del usuario
+#         if usuario is not None:
+#             login(request, usuario)
+#             return redirect('pueblos_principal')  # Redirigir a la vista correcta
         
-        try:
-            usuario = Usuario.objects.get(email=email)
-            if usuario.password == password:  # Comparación en texto plano
-                login(request, usuario)  # Iniciar sesión manualmente
-                return redirect('pueblos_principal')  # Redirigir a la vista correcta
-            else:
-                return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
-        except Usuario.DoesNotExist:
-            return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
+#         # try:
+#         #     usuario = Usuario.objects.get(email=email)
+#         #     if usuario.password == password:  # Comparación en texto plano
+#         #         login(request, usuario)  # Iniciar sesión manualmente
+#         #         return redirect('pueblos_principal')  # Redirigir a la vista correcta
+#         #     else:
+#         #         return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
+#         # except Usuario.DoesNotExist:
+#         #     return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
     
-    return render(request, 'login_form.html')
+#     return render(request, 'login_form.html')
+
+from django.contrib.auth import login
+from .forms import LoginForm
+
+def login_view(request):
+    from django.contrib import messages  # para mostrar mensajes si no lo tienes ya
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            usuario = form.get_user()
+            login(request, usuario)
+            return redirect(request.GET.get('next', 'pueblos_principal'))
+        else:
+            messages.error(request, "Credenciales inválidas. Intenta de nuevo.")
+            print("Errores del formulario:", form.errors)  # <--- Imprime errores en consola
+    else:
+        form = LoginForm()
+
+    return render(request, 'login_form.html', {'form': form})
+
 
 
 
@@ -249,4 +275,33 @@ def pueblos_por_comunidad(request, comunidad_id):
         'comunidad': comunidad,
         'pueblos': pueblos
     })
+
+
+class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
+    template_name = 'Registro.html'
+    model = Usuario
+    form_class = UsuarioForm
+    success_url = reverse_lazy('login')  # redirige al login tras registrarse
+    success_message = "Gracias, %(name)s. Tu cuenta ha sido registrada con éxito."
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        send_mail(
+            subject=f"Bienvenido/a a Be Rural, {form.instance.name}",
+            message=(
+                f"Hola {form.instance.name},\n\n"
+                "Tu cuenta ha sido creada con éxito.\n"
+                "Gracias por formar parte de Be Rural ✨"
+            ),
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[form.instance.email],
+            fail_silently=False,
+        )
+        return response
+
+@login_required
+def chat_view(request):
+    chat_group = get_object_or_404(ChatGroup, group_name = "public-chat")
+    chat_messages = chat_group.mensajes.all()[:30]  # Obtener los últimos 10 mensajes
+    return render(request, 'chat.html', {'chat_messages': chat_messages})
 

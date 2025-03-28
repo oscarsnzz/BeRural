@@ -1,43 +1,63 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
 from . import models
-from django.contrib import admin
-from .models import Pueblo  # Importa el modelo
+from .models import Pueblo, Usuario
 
-from django.contrib import admin
-from .models import Pueblo
+# ------------------- Usuario personalizado -------------------
 
+class UsuarioAdmin(BaseUserAdmin):
+    model = Usuario
+    list_display = ('email', 'name', 'apellidos', 'telefono', 'is_staff', 'is_superuser')
+    list_filter = ('is_staff', 'is_superuser')
+    search_fields = ('email', 'name', 'apellidos')
+    ordering = ('email',)
 
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        (_('Información personal'), {'fields': ('name', 'apellidos', 'telefono')}),
+        (_('Permisos'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Fechas importantes'), {'fields': ('last_login',)}),
+    )
 
-# Personalizamos la visualización de Destination en el panel de administración
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'name', 'apellidos', 'telefono', 'password1', 'password2', 'is_staff', 'is_superuser'),
+        }),
+    )
+
+    def delete_model(self, request, obj):
+        obj.mensajes.all().delete()
+        super().delete_model(request, obj)
+
+admin.site.register(Usuario, UsuarioAdmin)
+
+# ------------------- Otros modelos -------------------
+
 @admin.register(models.Destination)
 class DestinationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'image')  # Mostramos los campos principales
-    list_filter = ('name',)  # Filtramos por nombre
-    search_fields = ('name', 'description')  # Habilitamos la búsqueda por nombre y descripción
+    list_display = ('name', 'description', 'image')
+    list_filter = ('name',)
+    search_fields = ('name', 'description')
 
-# Registramos Cruise y InfoRequest sin personalización adicional
 @admin.register(models.Cruise)
 class CruiseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')  # Mostramos los campos principales
+    list_display = ('name', 'description')
     list_filter = ('name',)
     search_fields = ('name', 'description')
 
 @admin.register(models.InfoRequest)
 class InfoRequestAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'cruise')  # Mostramos los campos principales
+    list_display = ('name', 'email', 'cruise')
     list_filter = ('cruise',)
-    search_fields = ('name','email')
-
-
-@admin.register(models.Usuario)  # Utiliza el decorador para registrar el modelo
-class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('name', 'apellidos', 'telefono', 'email', 'password')  # Campos que quieres mostrar en la lista
-    search_fields = ('name', 'apellidos', 'email')  # Campos por los que se puede buscar
-
+    search_fields = ('name', 'email')
 
 @admin.register(Pueblo)
 class PuebloAdmin(admin.ModelAdmin):
-    list_display = ('name', 'ubicacion', 'habitantes')  # Campos visibles en el panel
-    search_fields = ('name', 'ubicacion')  # Habilitar búsqueda
+    list_display = ('name', 'ubicacion', 'habitantes')
+    search_fields = ('name', 'ubicacion')
 
 admin.site.register(models.Review)
+admin.site.register(models.ChatGroup)
+admin.site.register(models.GroupMessage)
