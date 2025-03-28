@@ -172,6 +172,8 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
+    
+    
 
 class Usuario(AbstractBaseUser):
     name = models.CharField(max_length=100)
