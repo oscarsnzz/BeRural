@@ -113,12 +113,12 @@
         {% endfor %}
     </div>
 
-    <div class="chat-input">
+    <form method="POST" class="chat-input">
         {% csrf_token %}
-    {{ form.body }}
-    <button type="submit" class="w-1/5 bg-green-400 px-4 py-2 rounded-lg text-black font-semibold hover:bg-green-500 transition">
-        Enviar
-    </button>
+        {{ form.body }}
+        <button type="submit">Enviar</button>
+    </form>
+    
     </div>
 </div>
 {% endblock %}

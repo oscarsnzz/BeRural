@@ -321,6 +321,9 @@ def chat_view(request):
             message.group = chat_group     # IMPORTANTE: group, no chat_group
             message.save()
             return redirect('chat')
+        
+    else:
+        form = ChatMessageCreateForm()
 
     return render(request, 'chat.html', {
         'messages': messages,
