@@ -11,6 +11,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .forms import UsuarioForm
 from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .models import Usuario
+from .models import Pueblo
 
 # Create your views here.
 def index(request):
@@ -121,7 +125,9 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
             fail_silently=False,
         )
         return response
+    
 
+### RESEÑAS DE LOS PUEBLOS
 def add_review(request, pk, model_type):
     
     if model_type == 'pueblo':
@@ -162,14 +168,8 @@ class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
         )
         return response
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from .models import Usuario
 
-from django.shortcuts import render, redirect
-from .models import Usuario
-from django.contrib.auth import login
-
+### LOGIN para los usuarios 
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -187,8 +187,7 @@ def login_view(request):
     
     return render(request, 'login_form.html')
 
-from django.shortcuts import render
-from .models import Pueblo
+
 
 def pueblos(request):
     show_all = request.GET.get('show_all', 'false') == 'true'
@@ -242,14 +241,6 @@ class PuebloDetailView(generic.DetailView):
 from django.shortcuts import render
 from .models import Pueblo, Comunidad
 
-# def pueblos_por_comunidad(request, comunidad_id):
-#     pueblos = Pueblo.objects.filter(comunidad=comunidad_id)
-
-#     return render(request, 'pueblos_por_comunidad.html', {
-#         'pueblos': pueblos,
-#         'comunidad_id': comunidad_id
-#     })
-
 def pueblos_por_comunidad(request, comunidad_id):
     comunidad = get_object_or_404(Comunidad, id=comunidad_id)
     pueblos = Pueblo.objects.filter(comunidad=comunidad)  # Obtener los pueblos de esa comunidad
@@ -258,3 +249,4 @@ def pueblos_por_comunidad(request, comunidad_id):
         'comunidad': comunidad,
         'pueblos': pueblos
     })
+

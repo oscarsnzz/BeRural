@@ -81,20 +81,27 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'django',
+#         'USER': 'Rodrigo',
+#         'PASSWORD': "1234ASDF@",
+#         'HOST': 'base-datos-practica.postgres.database.azure.com',
+#         'PORT': '5432',
+#         'OPTIONS': {
+#              'sslmode': 'require',  # Habilita SSL,
+#              }
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',
-        'USER': 'Rodrigo',
-        'PASSWORD': "1234ASDF@",
-        'HOST': 'base-datos-practica.postgres.database.azure.com',
-        'PORT': '5432',
-        'OPTIONS': {
-             'sslmode': 'require',  # Habilita SSL,
-             }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

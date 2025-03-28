@@ -60,7 +60,6 @@
         /* Estilos para imágenes en las tarjetas */
         .card-img-top {
             border-radius: 12px;
-            margin-bottom: 20px;
             width: 90%;
             height: 150px;
             object-fit: cover;
@@ -69,19 +68,18 @@
             margin-right: auto;
         }
 
-        /* Estilos para el mapa */
-        path {
-            fill: #3333FF;
-            stroke: #000;
-            stroke-width: 1px;
-            transition: fill 0.3s;
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        path:hover {
-            fill: #ffcc00;
-            cursor: pointer;
+        .card p{
+            margin-bottom: 0;
         }
 
+        .card h5 {
+            margin-bottom: 10px;
+        }   
         /* Tooltip */
         .tooltip {
             position: absolute;
@@ -147,7 +145,7 @@
                         <p><strong>Ubicación:</strong> {{ pueblo.ubicacion }}</p>
                         <p><strong>Habitantes:</strong> {{ pueblo.habitantes }}</p>
                         <p>
-                            Average Rating:
+                            Valoraciones:
                             {% for _ in full_stars %}
                             <i class="fas fa-star text-warning"></i>
                             {% endfor %}
