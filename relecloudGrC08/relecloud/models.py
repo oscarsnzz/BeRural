@@ -90,6 +90,14 @@ class Pueblo(models.Model):
     )
     slug = models.SlugField(unique=True, blank=True, null=True)  # Slug para URL
 
+    gestor = models.OneToOneField(
+        'Usuario',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='pueblo_gestionado'
+    )
+
 
     def __str__(self):
         return self.name
@@ -190,6 +198,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    is_gestor=models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'apellidos']
