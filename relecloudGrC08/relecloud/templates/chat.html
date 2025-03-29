@@ -1,4 +1,10 @@
 {% block content %}
+<head>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/htmx-ext-ws"></script>
+</head>
+
+<body hx-ext="ws">
 <style>
     .chat-container {
         max-width: 700px;
@@ -60,24 +66,18 @@
         color: #aaa;
     }
 
-    .chat-input {
-        background-color: #2d2d2d;
-        padding: 12px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .chat-input input[type="text"] {
+    .chat-input-text {
         flex: 1;
         padding: 10px 14px;
         border: none;
         border-radius: 12px;
         outline: none;
         font-size: 14px;
+        background-color: white;
+        color: #1e1e1e;
     }
 
-    .chat-input button {
+    .chat-send-button {
         padding: 10px 20px;
         background-color: #4ade80;
         color: #1e1e1e;
@@ -87,14 +87,14 @@
         cursor: pointer;
     }
 
-    .chat-input button:hover {
+    .chat-send-button:hover {
         background-color: #22c55e;
     }
 
     .fade-in-up {
         animation: fadeInUp 0.6s ease;
     }
-    
+
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -105,7 +105,6 @@
             transform: translateY(0);
         }
     }
-    
 </style>
 
 <div class="chat-container">
@@ -113,48 +112,59 @@
         <span id="online-count">3</span> online
     </div>
 
-    <div class="chat-messages" id="chat_container">
+    <div class="chat-messages"
+         id="chat_container"
+         ws-connect="/ws/chatroom/public-chat/">
         {% for message in messages %}
-        {% include 'chat_message.html' %}
+            {% include 'chat_message.html' %}
         {% endfor %}
     </div>
 
-    <form method="POST" class="chat-input"
-        hx-post="{% url 'chat' %}"
-        hx-target="#chat_container"
-        hx-swap="beforeend">
-        {% csrf_token %}
-        {{ form.body }}
-        <button type="submit">Enviar</button>
-    </form>
-    
+    <div class="chat-input" style="padding: 12px 16px;">
+        <form id="chat_message_form"
+              style="display: flex; gap: 10px; width: 100%;"
+              hx-ext="ws"
+              ws-connect="/ws/chatroom/public-chat/"
+              ws-send
+              _="on htmx:wsAfterSend reset() then call scrollChatToBottom()">
+            {% csrf_token %}
+            <input type="text"
+                   name="body"
+                   placeholder="Escribe tu mensaje..."
+                   class="chat-input-text"
+                   required>
+            <button type="submit" class="chat-send-button">Enviar</button>
+        </form>
     </div>
 </div>
 
 <script>
-    document.body.addEventListener('htmx:afterSwap', (e) => {
-        if (e.target.id === "chat_container") {
-            const newMessage = e.detail.target.lastElementChild;
-            newMessage.classList.remove('fade-in-up'); // por si acaso
-            void newMessage.offsetWidth; // truco para reiniciar la animación
-            newMessage.classList.add('fade-in-up');
-        }
+    function scrollChatToBottom() {
+        const container = document.getElementById("chat_container");
+        container.scrollTop = container.scrollHeight;
+    }
+
+    document.body.addEventListener("htmx:wsAfterMessage", function(event) {
+        const html = event.detail.message;
+        const container = document.getElementById("chat_container");
+
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+
+        const newMessage = wrapper.firstElementChild;
+        const msgId = newMessage?.dataset?.id;
+
+        if (!msgId || container.querySelector(`[data-id="${msgId}"]`)) return;
+
+        container.appendChild(newMessage);
+        scrollChatToBottom();
     });
 
-
-</script>
-
-<script src="https://unpkg.com/htmx.org@1.9.2"></script>
-<script>
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
-        const form = document.querySelector('.chat-input');
-        if (form) {
-            form.reset();  // borra el campo input
-        }
+    document.body.addEventListener("htmx:wsAfterSend", () => {
+        document.getElementById("chat_message_form").reset();
     });
+
+    window.addEventListener("load", scrollChatToBottom);
 </script>
-
-
+</body>
 {% endblock %}
-
-
