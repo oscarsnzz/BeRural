@@ -214,9 +214,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         super().delete(*args, **kwargs)
 
 
+import shortuuid
 
 class ChatGroup(models.Model):
-    group_name = models.CharField(max_length=128, unique=True)
+    group_name = models.CharField(max_length=128, unique=True, default=shortuuid.uuid)
+    users_online = models.ManyToManyField(Usuario, related_name='online_in_groups', blank=True)
+    members = models.ManyToManyField(Usuario, related_name='chat_groups', blank=True)
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
         return self.group_name

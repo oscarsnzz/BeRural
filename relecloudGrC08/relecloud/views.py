@@ -338,3 +338,43 @@ def chat_view(request):
         'form': form,
         'user': request.user
     })
+
+
+@login_required
+def chat_con_pueblo_view(request, slug):
+    pueblo = get_object_or_404(Pueblo, slug=slug)
+    gestor = pueblo.gestor  # asumimos que tienes un campo ForeignKey a Usuario en Pueblo
+
+    # El nombre del grupo de chat puede ser algo como "chat-pueblo-slug"
+    group_name = f"chat-{pueblo.slug}"
+    chat_group, _ = ChatGroup.objects.get_or_create(group_name=group_name)
+
+    messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]
+
+    if request.method == 'POST':
+        form = ChatMessageCreateForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.author = request.user
+            message.group = chat_group
+            message.save()
+
+            if request.headers.get('HX-Request'):
+                return render(request, 'chat_message.html', {
+                    'message': message,
+                    'user': request.user,
+                    'just_added': True,
+                })
+
+            return redirect('chat-con-pueblo', slug=slug)
+
+    else:
+        form = ChatMessageCreateForm()
+
+    return render(request, 'chat.html', {
+        'messages': messages,
+        'form': form,
+        'user': request.user,
+        'pueblo': pueblo,
+        'gestor': gestor,
+    })

@@ -19,5 +19,7 @@ urlpatterns = [
     path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
     path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
     path ('chat/', views.chat_view , name='chat'),
+    path('chat/pueblo/<slug:slug>/', views.chat_con_pueblo_view , name='start-chat'),
+
 
 ]
