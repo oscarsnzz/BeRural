@@ -184,6 +184,12 @@
                 <br>
                 <button type="submit" class="btn btn-success mt-2">Enviar reseña</button>
             </form>
+
+            {% if pueblo.gestor %}
+    <a class="chat-button" href="{% url 'start-chat' pueblo.slug %}">Hablar con el gestor</a>
+{% else %}
+    <p>Este pueblo aún no tiene gestor disponible.</p>
+{% endif %}
         </div> <!-- Cierra el contenedor principal -->
     </div>
 
