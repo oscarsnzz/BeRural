@@ -18,8 +18,8 @@ urlpatterns = [
     path('pueblos/', views.pueblos, name='pueblos_principal'),
     path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
     path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
-    path ('chat/', views.chat_view , name='chat'),
-    path('chat/pueblo/<slug:slug>/', views.chat_con_pueblo_view , name='start-chat'),
-
-
+    path('chat/', views.chat_view, name='chat'),  # público
+    path('chat/<str:chatroom_name>/', views.chat_view, name='start-chat'),  # privado
+    path('chat/pueblo/<slug:slug>/', views.chat_con_pueblo_view, name='chat-con-pueblo'),
+    path("gestor/chats/", views.chats_para_gestor, name="gestor-chats"),
 ]

@@ -306,11 +306,24 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import ChatGroup, GroupMessage
 from .forms import ChatMessageCreateForm
+from django.http import Http404
+
 @login_required
-def chat_view(request):
-    chat_group = get_object_or_404(ChatGroup, group_name="public-chat")
+def chat_view(request, chatroom_name='public-chat'):
+    chat_group = get_object_or_404(ChatGroup, group_name=chatroom_name)
     messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]
-    
+
+    other_user = None
+    if chat_group.is_private:
+        if request.user not in chat_group.members.all():
+            raise Http404()
+        for member in chat_group.members.all():
+            if member != request.user:
+                other_user = member
+                break
+
+    mis_chats = request.user.chat_groups.filter(is_private=True)
+
     if request.method == 'POST':
         form = ChatMessageCreateForm(request.POST)
         if form.is_valid():
@@ -319,35 +332,43 @@ def chat_view(request):
             message.group = chat_group
             message.save()
 
-            # 👉 Si el POST viene de HTMX, devolver solo el fragmento
             if request.headers.get('HX-Request'):
                 return render(request, 'chat_message.html', {
                     'message': message,
                     'user': request.user,
-                    'just_added': True, # Para marcar el mensaje como nuevo
+                    'just_added': True,
                 })
-
-            # 👉 Si es un POST normal, redirige
             return redirect('chat')
 
     else:
         form = ChatMessageCreateForm()
 
-    return render(request, 'chat.html', {
+    context = {
         'messages': messages,
         'form': form,
-        'user': request.user
-    })
+        'other_user': other_user,
+        'chatroom_name': chatroom_name,
+        'mis_chats': mis_chats,  # 👈 Aquí
+    }
 
+    return render(request, 'chat.html', context)
 
 @login_required
 def chat_con_pueblo_view(request, slug):
     pueblo = get_object_or_404(Pueblo, slug=slug)
-    gestor = pueblo.gestor  # asumimos que tienes un campo ForeignKey a Usuario en Pueblo
+    gestor = pueblo.gestor
 
-    # El nombre del grupo de chat puede ser algo como "chat-pueblo-slug"
-    group_name = f"chat-{pueblo.slug}"
-    chat_group, _ = ChatGroup.objects.get_or_create(group_name=group_name)
+    if request.user == gestor:
+        return redirect('pueblos_principal')  # por si el gestor intenta hablar consigo mismo
+
+    user_ids = sorted([str(request.user.id), str(gestor.id)])
+    group_name = f"chat-{slug}-{'-'.join(user_ids)}"
+
+    chat_group, created = ChatGroup.objects.get_or_create(
+        group_name=group_name,
+        defaults={"is_private": True}
+    )
+    chat_group.members.add(request.user, gestor)
 
     messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]
 
@@ -377,4 +398,48 @@ def chat_con_pueblo_view(request, slug):
         'user': request.user,
         'pueblo': pueblo,
         'gestor': gestor,
+        'chatroom_name': group_name,
+        'other_user': gestor if request.user != gestor else None
+    })
+
+
+def get_or_create_chatroom(request, username):
+    if request.user.username == username:
+        return redirect('pueblos_principal')
+    
+    other_user = Usuario.objects.get(username = username)
+    my_chatrooms = request.user.chat_groups.filter(is_private= True)
+
+    if my_chatrooms.exist():
+        for chatroom in my_chatrooms:
+            if other_user in chatroom.members.all():
+                chatroom = chatroom
+                break
+            else:
+                chatroom = ChatGroup.objects.create(is_private = True)
+                chatroom.members.add(other_user, request.user)
+    else:
+        chatroom = ChatGroup.objects.create(is_private = True)
+        chatroom.members.add(other_user, request.user)
+
+    return redirect('start-chat', chatroom.group_name)
+
+@login_required
+def chats_para_gestor(request):
+    if not request.user.es_gestor:
+        return redirect('pueblos_principal')
+
+    pueblo = getattr(request.user, 'pueblo_gestionado', None)
+    if not pueblo:
+        return render(request, 'chats_gestor.html', {'mis_chats': []})
+
+    chats = ChatGroup.objects.filter(
+        group_name__startswith=f'chat-{pueblo.slug}-',
+        is_private=True,
+        members=request.user  # el gestor debe estar en el grupo
+    )
+
+    return render(request, 'chats_gestor.html', {
+        'mis_chats': chats,
+        'pueblo': pueblo
     })

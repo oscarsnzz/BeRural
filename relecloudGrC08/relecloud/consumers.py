@@ -42,16 +42,6 @@ class ChatRoomConsumer(WebsocketConsumer):
             author=self.user
         )
 
-        # Enviar al grupo (todos menos tú)
-        async_to_sync(self.channel_layer.group_send)(
-            self.chatroom_name,
-            {
-                "type": "menssage_handler",
-                "message_id": message.id,
-            }
-        )
-
-        # Renderizar solo para ti (sin duplicar en el grupo)
         html = render_to_string("chat_message.html", {
             "message": message,
             "user": self.scope["user"],
@@ -59,10 +49,26 @@ class ChatRoomConsumer(WebsocketConsumer):
             "es_mio": True,
         })
 
-        self.send(text_data=html)
+        self.send(text_data=json.dumps({
+            "html": html
+        }))
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.chatroom_name,
+            {
+                "type": "menssage_handler",
+                "message_id": message.id,
+                "sender_id": self.user.id,
+            }
+        )
 
     def menssage_handler(self, event):
         message_id = event["message_id"]
+        sender_id = event.get("sender_id")
+
+        if self.user.id == sender_id:
+            return
+
         message = GroupMessage.objects.get(id=message_id)
 
         html = render_to_string("chat_message.html", {
@@ -71,19 +77,19 @@ class ChatRoomConsumer(WebsocketConsumer):
             "just_added": True,
         })
 
-        self.send(text_data=html)
+        self.send(text_data=json.dumps({
+            "html": html
+        }))
 
     def update_online_count(self):
         online_count = self.chatroom.users_online.count()
-
-        
 
         event = {
             'type': 'online_count_handler',
             'online_count': online_count
         }
 
-        async_to_sync(self.channel_layer.group_send)(  # <--- corregido aquí
+        async_to_sync(self.channel_layer.group_send)(
             self.chatroom_name,
             event
         )
@@ -95,4 +101,6 @@ class ChatRoomConsumer(WebsocketConsumer):
             'online_count': online_count
         })
 
-        self.send(text_data=html)
+        self.send(text_data=json.dumps({
+            "html": html
+        }))

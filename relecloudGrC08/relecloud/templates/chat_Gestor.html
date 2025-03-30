@@ -1,0 +1,19 @@
+{% block content %}
+<h2>Usuarios interesados en tu pueblo ({{ pueblo.name }})</h2>
+
+<ul>
+  {% for chat in mis_chats %}
+    {% for member in chat.members.all %}
+      {% if member != user %}
+        <li>
+          <a href="{% url 'start-chat' chat.group_name %}">
+            Conversación con {{ member.name }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  {% empty %}
+    <li>No hay conversaciones todavía.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

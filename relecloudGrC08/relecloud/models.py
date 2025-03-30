@@ -213,6 +213,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         self.mensajes.all().delete()
         super().delete(*args, **kwargs)
 
+    @property
+    def es_gestor(self):
+        return self.groups.filter(name="Gestores").exists()
 
 import shortuuid
 
@@ -239,7 +242,9 @@ class GroupMessage(models.Model):
     created = models.DateTimeField(auto_now_add=True)   
 
     def __str__(self):
-        return f'{self.author.name} - {self.body}'
+        author_name = self.author.name if self.author else "Anónimo"
+        return f'{author_name} - {self.body}'
+
     
     class Meta:
         ordering = ['created']  

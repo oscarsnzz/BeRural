@@ -8,7 +8,7 @@ from .models import Pueblo, Usuario
 
 class UsuarioAdmin(BaseUserAdmin):
     model = Usuario
-    list_display = ('email', 'name', 'apellidos', 'telefono', 'is_staff', 'is_superuser')
+    list_display = ('email', 'name', 'apellidos', 'telefono', 'is_staff', 'is_superuser', 'mostrar_es_gestor')
     list_filter = ('is_staff', 'is_superuser')
     search_fields = ('email', 'name', 'apellidos')
     ordering = ('email',)
@@ -30,6 +30,12 @@ class UsuarioAdmin(BaseUserAdmin):
     def delete_model(self, request, obj):
         obj.mensajes.all().delete()
         super().delete_model(request, obj)
+
+
+    def mostrar_es_gestor(self, obj):
+        return obj.es_gestor
+    mostrar_es_gestor.boolean = True  # ✅ Muestra check verde o cruz
+    mostrar_es_gestor.short_description = "Es gestor"
 
 admin.site.register(Usuario, UsuarioAdmin)
 
