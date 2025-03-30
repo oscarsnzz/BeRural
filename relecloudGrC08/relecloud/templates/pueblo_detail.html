@@ -186,7 +186,7 @@
             </form>
 
             {% if pueblo.gestor %}
-    <a class="chat-button" href="{% url 'start-chat' pueblo.slug %}">Hablar con el gestor</a>
+    <a class="chat-button" href="{% url 'chat-con-pueblo' slug=pueblo.slug %}">Hablar con el gestor</a>
 {% else %}
     <p>Este pueblo aún no tiene gestor disponible.</p>
 {% endif %}
