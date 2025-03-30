@@ -15,11 +15,24 @@ urlpatterns = [
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
     path('accounts/login/', views.login_view , name='login'),
+
+    ##Pueblos principales
     path('pueblos/', views.pueblos, name='pueblos_principal'),
+
+    ## aqui se ve el pueblo detail
     path('pueblo/<slug:slug>/', views.PuebloDetailView.as_view() , name='pueblo_detail'),
+
+    ##aqui se ven todos los pueblos que tiene una comunidad 
     path('pueblos_por_comunidad/<str:comunidad_id>/', views.pueblos_por_comunidad, name='pueblos_por_comunidad'),
+    ##editar pueblo
+    path("gestor/pueblo/editar/<slug:slug>/", views.editar_pueblo, name="editar-pueblo"),
+
+    ## chats 
     path('chat/', views.chat_view, name='chat'),  # público
     path('chat/<str:chatroom_name>/', views.chat_view, name='start-chat'),  # privado
     path('chat/pueblo/<slug:slug>/', views.chat_con_pueblo_view, name='chat-con-pueblo'),
     path("gestor/chats/", views.chats_para_gestor, name="gestor-chats"),
+
+   
+
 ]

@@ -9,7 +9,7 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import UsuarioForm
+from .forms import UsuarioForm, PuebloForm
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
@@ -443,3 +443,21 @@ def chats_para_gestor(request):
         'mis_chats': chats,
         'pueblo': pueblo
     })
+
+
+@login_required
+def editar_pueblo(request, slug):
+    pueblo = get_object_or_404(Pueblo, slug=slug)
+
+    if request.user != pueblo.gestor:
+        return redirect('pueblos_principal')
+
+    if request.method == "POST":
+        form = PuebloForm(request.POST, request.FILES, instance=pueblo)
+        if form.is_valid():
+            form.save()
+            return redirect('pueblo_detail', slug=pueblo.slug)
+    else:
+        form = PuebloForm(instance=pueblo)
+
+    return render(request, 'Pueblos_editar.html', {'form': form, 'pueblo': pueblo})

@@ -93,3 +93,15 @@ class ChatMessageCreateForm(forms.ModelForm):
                 'autocomplete': 'off',
             }),
         }
+
+
+class PuebloForm(forms.ModelForm):
+    class Meta:
+        model = Pueblo
+        fields = ['name', 'descripcion', 'servicios', 'actividades', 'incentivos', 'image']
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'servicios': forms.Textarea(attrs={'rows': 3}),
+            'actividades': forms.Textarea(attrs={'rows': 3}),
+            'incentivos': forms.Textarea(attrs={'rows': 3}),
+        }

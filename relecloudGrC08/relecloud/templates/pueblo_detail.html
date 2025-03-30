@@ -117,6 +117,14 @@
             <img src="{{ pueblo.image.url }}" class="card-img-top" alt="Imagen de {{ pueblo.name }}">
             
             <h3>Descripcion</h3>
+            {% if request.user == pueblo.gestor %}
+    <div style="text-align: right; margin-bottom: 10px;">
+        <a href="{% url 'editar-pueblo' pueblo.slug %}" 
+           style="background-color: #facc15; color: #000; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+            <i class="fas fa-edit"></i> Editar pueblo
+        </a>
+    </div>
+{% endif %}
 
             <p>{{ pueblo.descripcion }}</p>
             <h3>Servicios</h3>
