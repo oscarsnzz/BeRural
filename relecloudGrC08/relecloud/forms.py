@@ -105,3 +105,15 @@ class PuebloForm(forms.ModelForm):
             'actividades': forms.Textarea(attrs={'rows': 3}),
             'incentivos': forms.Textarea(attrs={'rows': 3}),
         }
+        
+        
+class TareaMudanzaForm(forms.ModelForm):
+    class Meta:
+        model  = TareaMudanza
+        fields = ['nombre']
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'placeholder': 'Nueva tarea…',
+                'required': True
+            })
+        }

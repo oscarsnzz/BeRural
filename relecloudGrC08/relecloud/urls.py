@@ -33,6 +33,13 @@ urlpatterns = [
     path('chat/pueblo/<slug:slug>/', views.chat_con_pueblo_view, name='chat-con-pueblo'),
     path("gestor/chats/", views.chats_para_gestor, name="gestor-chats"),
 
+    ## Perfil
+    path('perfil/', views.perfil, name='perfil'),
+    
+    ## Mudanza
+    path('mudanza/',                  views.mudanza,     name='mudanza'),
+    path('mudanza/add/',              views.add_tarea,   name='add_tarea'),
+    path('mudanza/toggle/<int:pk>/',  views.toggle_tarea, name='toggle_tarea'),
    
 
 ]

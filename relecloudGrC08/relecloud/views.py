@@ -17,6 +17,9 @@ from .models import Usuario
 from .models import Pueblo
 from .models import ChatGroup, GroupMessage
 from django.contrib.auth.decorators import login_required
+from .models import TareaMudanza
+from .forms import TareaMudanzaForm
+
 
 # Create your views here.
 def index(request):
@@ -461,3 +464,41 @@ def editar_pueblo(request, slug):
         form = PuebloForm(instance=pueblo)
 
     return render(request, 'Pueblos_editar.html', {'form': form, 'pueblo': pueblo})
+
+
+
+@login_required  
+def perfil(request):
+    return render(request, 'perfil.html')
+
+@login_required
+def mudanza(request):
+    tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
+    completed = tareas.filter(completada=True).count()
+    pending   = tareas.count() - completed
+    return render(request, 'mudanza.html', {
+        'tareas':    tareas,
+        'completed': completed,
+        'pending':   pending,
+    })
+
+@login_required
+def add_tarea(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre','').strip()
+        if nombre:
+            TareaMudanza.objects.create(
+                usuario=request.user,
+                nombre=nombre
+            )
+    return redirect('mudanza')
+
+@login_required
+def toggle_tarea(request, pk):
+    if request.method == 'POST':
+        tarea = get_object_or_404(TareaMudanza,
+                                  pk=pk,
+                                  usuario=request.user)
+        tarea.completada = not tarea.completada
+        tarea.save()
+    return redirect('mudanza')

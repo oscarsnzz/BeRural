@@ -8,6 +8,7 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.conf import settings
 
 
 # Create your models here.
@@ -248,3 +249,19 @@ class GroupMessage(models.Model):
     
     class Meta:
         ordering = ['created']  
+        
+        
+class TareaMudanza(models.Model):
+    usuario    = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                   on_delete=models.CASCADE)
+    nombre     = models.CharField(max_length=200)
+    completada = models.BooleanField(default=False)
+    orden      = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return self.nombre
