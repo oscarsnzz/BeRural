@@ -501,7 +501,7 @@ def add_tarea(request):
             for t in tareas
         ]
         return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
-    return redirect('mudanza')
+    return redirect(reverse('mudanza') + '#lista')
 
 @login_required
 def toggle_tarea(request, pk):
@@ -515,7 +515,7 @@ def toggle_tarea(request, pk):
         pending   = tareas.count() - completed
         lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
         return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
-    return redirect('mudanza')
+    return redirect(reverse('mudanza') + '#lista')
 
 @login_required
 def delete_tarea(request, pk):
@@ -528,7 +528,7 @@ def delete_tarea(request, pk):
         pending   = tareas.count() - completed
         lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
         return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
-    return redirect('mudanza')
+    return redirect(reverse('mudanza') + '#lista')
 
 @login_required
 def edit_tarea(request, pk):
@@ -544,7 +544,7 @@ def edit_tarea(request, pk):
         pending   = tareas.count() - completed
         lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
         return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
-    return redirect('mudanza')
+    return redirect(reverse('mudanza') + '#lista')
 
 # views.py
 import uuid

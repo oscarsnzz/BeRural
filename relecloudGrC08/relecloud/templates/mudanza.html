@@ -198,7 +198,7 @@
     <!-- Contenido Lista -->
     <div class="tab-content" id="lista">
       {# Form para añadir tareas #}
-      <form method="post" action="{% url 'add_tarea' %}" class="add-task-form">
+      <form method="post" action="{% url 'add_tarea' %}" class="js-tarea-form">
         {% csrf_token %}
         <div style="display:flex; max-width:360px; margin:0 auto 1rem;">
           <input
@@ -221,7 +221,7 @@
             
             <div style="display:flex; align-items:center;">
               {# checkbox que alterna completada #}
-              <form method="post" action="{% url 'toggle_tarea' tarea.pk %}">
+              <form method="post" action="{% url 'toggle_tarea' tarea.pk %}" class="js-tarea-form">
                 {% csrf_token %}
                 <label class="checkbox-wrapper">
                   <input
@@ -234,7 +234,7 @@
               </form>
 
               {# inline form de edición #}
-              <form method="post" action="{% url 'edit_tarea' tarea.pk %}" style="margin-left:12px; display:flex; align-items:center;">
+              <form method="post" action="{% url 'edit_tarea' tarea.pk %}" style="margin-left:12px; display:flex; align-items:center;" class="js-tarea-form">
                 {% csrf_token %}
                 <input
                   type="text"
@@ -250,7 +250,7 @@
             </div>
 
             {# botón eliminar #}
-            <form method="post" action="{% url 'delete_tarea' tarea.pk %}">
+            <form method="post" action="{% url 'delete_tarea' tarea.pk %}" class="js-tarea-form">
               {% csrf_token %}
               <button type="submit" style="background:none; border:none; padding:4px;">
                 <i class="fas fa-trash"></i>
@@ -291,8 +291,17 @@
       // Al clicar en una pestaña cambiamos hash y activamos
       document.querySelectorAll(".tabs .tab").forEach(tab => {
         tab.addEventListener("click", () => {
-          window.location.hash = tab.dataset.target;
-          activateTab(tab.dataset.target);
+          const target = tab.dataset.target;
+          // actualizamos el hash para poder refrescar siempre a la pestaña correcta
+          window.location.hash = target;
+          if (target === "grafico") {
+            // si es la pestaña de gráfico, recargamos la página entera 
+            // (traerá completed/pending nuevos y al recargar el script abrirá "grafico")
+            window.location.reload();
+            return;
+          }
+          // para la pestaña lista no recargamos, solo alternamos contenido
+          activateTab(target);
         });
       });
 
