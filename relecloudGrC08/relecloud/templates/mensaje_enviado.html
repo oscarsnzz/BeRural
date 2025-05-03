@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Correo Enviado{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-4 text-white">Correo enviado</h1>
+    <p class="text-white mt-3">
+        Si el correo está registrado, te hemos enviado un enlace para restablecer tu contraseña.
+    </p>
+    <a href="{% url 'login' %}" class="btn btn-primary mt-4">Volver al inicio de sesión</a>
+</div>
+{% endblock %}

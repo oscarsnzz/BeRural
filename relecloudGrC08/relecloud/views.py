@@ -502,3 +502,62 @@ def toggle_tarea(request, pk):
         tarea.completada = not tarea.completada
         tarea.save()
     return redirect('mudanza')
+
+
+
+# views.py
+import uuid
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from .forms import PasswordResetRequestForm
+from .models import Usuario  # O get_user_model()
+
+reset_tokens = {}  # ⚠️ En producción usa una tabla con expiración
+
+def solicitar_reset_password(request):
+    if request.method == "POST":
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = Usuario.objects.get(email=email)
+                token = str(uuid.uuid4())
+                reset_tokens[token] = user.id  # ⚠️ En producción: usar modelo
+                link = request.build_absolute_uri(f"/reset-password/{token}/")
+                send_mail(
+                    "Recuperación de contraseña",
+                    f"Hola, haz clic en este enlace para restablecer tu contraseña:\n{link}",
+                    "noreply@berural.com",
+                    [email],
+                )
+                return render(request, "mensaje_enviado.html")
+            except Usuario.DoesNotExist:
+                form.add_error('email', 'No existe un usuario con ese correo.')
+    else:
+        form = PasswordResetRequestForm()
+    return render(request, "solicitar_reset_password.html", {"form": form})
+
+
+# views.py
+from .forms import CambiarPasswordForm
+
+def resetear_password(request, token):
+    user_id = reset_tokens.get(token)
+    if not user_id:
+        raise Http404("Token no válido o expirado")
+
+    usuario = Usuario.objects.get(id=user_id)
+
+    if request.method == "POST":
+        form = CambiarPasswordForm(request.POST)
+        if form.is_valid():
+            usuario.set_password(form.cleaned_data['password'])
+            usuario.save()
+            del reset_tokens[token]
+            return redirect("login")
+    else:
+        form = CambiarPasswordForm()
+
+    return render(request, "password_reset.html", {"form": form})
+

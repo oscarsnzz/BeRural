@@ -11,7 +11,10 @@ urlpatterns = [
     path('destination/<int:pk>/delete/', views.DestinationDeleteView.as_view(), name='destination_confirm_delete'),
     path('cruise/<int:pk>/', views.CruiseDetailView.as_view(), name='cruise_detail'),
     path('info_request/', views.InfoRequestCreate.as_view(), name='info_request'),
-    ##
+
+
+
+    ## Be Rural
     path('add_review/<int:pk>/<str:model_type>/', views.add_review, name='add_review'),
     path('Registro/', views.UsuarioCreate.as_view(), name='Registro'),
     path('accounts/login/', views.login_view , name='login'),
@@ -40,6 +43,11 @@ urlpatterns = [
     path('mudanza/',                  views.mudanza,     name='mudanza'),
     path('mudanza/add/',              views.add_tarea,   name='add_tarea'),
     path('mudanza/toggle/<int:pk>/',  views.toggle_tarea, name='toggle_tarea'),
+
+    # urls.py
+    path("solicitar-reset-password/", views.solicitar_reset_password, name="solicitar-reset-password"),
+    path("reset-password/<str:token>/", views.resetear_password, name="reset-password"),
+
    
 
 ]
