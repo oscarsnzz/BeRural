@@ -19,6 +19,8 @@ from .models import ChatGroup, GroupMessage
 from django.contrib.auth.decorators import login_required
 from .models import TareaMudanza
 from .forms import TareaMudanzaForm
+from django.urls import reverse
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -471,6 +473,8 @@ def editar_pueblo(request, slug):
 def perfil(request):
     return render(request, 'perfil.html')
 
+
+
 @login_required
 def mudanza(request):
     tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
@@ -487,23 +491,60 @@ def add_tarea(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre','').strip()
         if nombre:
-            TareaMudanza.objects.create(
-                usuario=request.user,
-                nombre=nombre
-            )
-    return redirect('mudanza')
+            TareaMudanza.objects.create(usuario=request.user, nombre=nombre)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
+        completed = tareas.filter(completada=True).count()
+        pending   = tareas.count() - completed
+        lista = [
+            {'id': t.pk, 'nombre': t.nombre, 'completada': t.completada}
+            for t in tareas
+        ]
+        return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
+    return redirect(reverse('mudanza') + '#lista')
 
 @login_required
 def toggle_tarea(request, pk):
     if request.method == 'POST':
-        tarea = get_object_or_404(TareaMudanza,
-                                  pk=pk,
-                                  usuario=request.user)
+        tarea = get_object_or_404(TareaMudanza, pk=pk, usuario=request.user)
         tarea.completada = not tarea.completada
         tarea.save()
-    return redirect('mudanza')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
+        completed = tareas.filter(completada=True).count()
+        pending   = tareas.count() - completed
+        lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
+        return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
+    return redirect(reverse('mudanza') + '#lista')
 
+@login_required
+def delete_tarea(request, pk):
+    if request.method == 'POST':
+        tarea = get_object_or_404(TareaMudanza, pk=pk, usuario=request.user)
+        tarea.delete()
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
+        completed = tareas.filter(completada=True).count()
+        pending   = tareas.count() - completed
+        lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
+        return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
+    return redirect(reverse('mudanza') + '#lista')
 
+@login_required
+def edit_tarea(request, pk):
+    if request.method == 'POST':
+        tarea = get_object_or_404(TareaMudanza, pk=pk, usuario=request.user)
+        nombre = request.POST.get('nombre','').strip()
+        if nombre:
+            tarea.nombre = nombre
+            tarea.save()
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tareas    = TareaMudanza.objects.filter(usuario=request.user).order_by('orden')
+        completed = tareas.filter(completada=True).count()
+        pending   = tareas.count() - completed
+        lista = [{'id': t.pk, 'nombre': t.nombre, 'completada': t.completada} for t in tareas]
+        return JsonResponse({'completed': completed, 'pending': pending, 'tareas': lista})
+    return redirect(reverse('mudanza') + '#lista')
 
 # views.py
 import uuid

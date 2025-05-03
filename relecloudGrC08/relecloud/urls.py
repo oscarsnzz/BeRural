@@ -42,7 +42,9 @@ urlpatterns = [
     ## Mudanza
     path('mudanza/',                  views.mudanza,     name='mudanza'),
     path('mudanza/add/',              views.add_tarea,   name='add_tarea'),
-    path('mudanza/toggle/<int:pk>/',  views.toggle_tarea, name='toggle_tarea'),
+    path('mudanza/<int:pk>/toggle/',  views.toggle_tarea, name='toggle_tarea'),
+    path('mudanza/<int:pk>/edit/',  views.edit_tarea,    name='edit_tarea'),
+    path('mudanza/<int:pk>/delete/',views.delete_tarea,  name='delete_tarea'),
 
     # urls.py
     path("solicitar-reset-password/", views.solicitar_reset_password, name="solicitar-reset-password"),
