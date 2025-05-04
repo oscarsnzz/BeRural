@@ -446,7 +446,7 @@ def solicitar_reset_password(request):
                     "noreply@berural.com",
                     [email],
                 )
-                return render(request, "mensaje_enviado.html")
+                return render(request, "Contrasena/mensaje_enviado.html")
             except Usuario.DoesNotExist:
                 form.add_error('email', 'No existe un usuario con ese correo.')
     else:
