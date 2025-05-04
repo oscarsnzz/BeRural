@@ -197,7 +197,7 @@
     {% endif %}
 </div>
 
-<div class="chat-container">
+{% comment %} <div class="chat-container">
     <div class="chat-header">
         {% if other_user %}
             Chateando con {{ other_user.name }}
@@ -220,10 +220,31 @@
         </form>
     </div>
 
-    
- 
-</div>
- 
+</div> 
+  {% endcomment %}
+
+  {% if other_user %}
+  <div class="chat-container">
+      <div class="chat-header">
+          Chateando con {{ other_user.name }}
+      </div>
+  
+      <div class="chat-messages" id="chat_container">
+          {% for message in messages %}
+              {% include 'Chats/chat_message.html' %}
+          {% endfor %}
+      </div>
+  
+      <div class="chat-input" style="padding: 12px 16px;">
+          <form id="chat_message_form" style="display: flex; gap: 10px; width: 100%;">
+              {% csrf_token %}
+              <input type="text" id="chat_input" name="body" placeholder="Escribe tu mensaje..." class="chat-input-text" required>
+              <button type="submit" class="chat-send-button">Enviar</button>
+          </form>
+      </div>
+  </div>
+  {% endif %}
+  
 <div class="bottom-nav">
     <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
     <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>

@@ -11,6 +11,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.conf import settings
 from django.utils.text import slugify
 
+from cloudinary.models import CloudinaryField
 
 
 ## Be rural 
@@ -31,11 +32,12 @@ class Pueblo(models.Model):
     servicios = models.TextField()
     actividades = models.TextField()
     incentivos = models.TextField()
-    image = models.ImageField(
-        upload_to='destinations/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
-        null=True,
-        blank=True
-    )    
+    # image = models.ImageField(
+    #     upload_to='destinations/',  # Carpeta dentro de MEDIA_ROOT donde se guardarán las imágenes
+    #     null=True,
+    #     blank=True
+    # )    
+    image = CloudinaryField('image', null=True, blank=True)  # Usando Cloudinary para almacenar imágenes
     comunidad = models.ForeignKey(
         Comunidad, 
         on_delete=models.CASCADE, 
