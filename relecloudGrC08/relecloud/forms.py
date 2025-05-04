@@ -3,25 +3,7 @@ from .models import *
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
-class InfoRequestForm(forms.ModelForm):
-    class Meta:
-        model = InfoRequest
-        fields = ['name', 'email', 'cruise', 'notes']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Your Email'}),
-            'cruise': forms.Select(attrs={'class': 'form-control'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Additional Notes'}),
-        }
 
-class DestinationForm(forms.ModelForm):
-    class Meta:
-        model = Destination
-        fields = ['name', 'description', 'image']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Destination Name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description'}),
-        }
 
 class StarRatingWidget(forms.RadioSelect):
     template_name = 'widgets/star_rating.html'
