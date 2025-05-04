@@ -1,7 +1,9 @@
 {% block content %}
 <head>
     <script src="https://unpkg.com/htmx.org"></script>
-    <script src="https://unpkg.com/htmx-ext-ws"></script>
+    <script src="https://unpkg.com/htmx-ext-ws"></script>´
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -133,6 +135,28 @@
     .chat-list a:hover {
         text-decoration: underline;
     }
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .bottom-nav a {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        font-size: 14px;
+    }
+    .bottom-nav i {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
 </style>
 
 <div class="chat-list">
@@ -195,7 +219,17 @@
             <button type="submit" class="chat-send-button">Enviar</button>
         </form>
     </div>
+
+    
+ 
 </div>
+ 
+<div class="bottom-nav">
+    <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
+    <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>
+    <a href="{% url 'perfil'%}"><i class="fas fa-user"></i>Perfil</a>
+</div>
+
 
 <script>
     function scrollChatToBottom() {
