@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from . import models
-from .models import Destination, Cruise, Review
+from .models import Review
 from django.db.models import Avg
 from .forms import ReviewForm
 from django.views.generic.edit import UpdateView
@@ -29,110 +29,6 @@ def index(request):
 
 def about(request):
     return render(request, 'about.html')
-
-def destinations(request):
-    show_all = request.GET.get('show_all', 'false') == 'true'  
-    all_destinations = Destination.objects.annotate(average_rating=Avg('reviews__rating'))
-    if show_all:
-        destinations_list = all_destinations
-    else:
-        destinations_list = all_destinations.filter(average_rating__isnull=False).order_by('-average_rating')[:3]
-
-    for destination in destinations_list:
-        full_stars = int(destination.average_rating or 0)
-        empty_stars = 5 - full_stars
-        destination.stars_full = range(full_stars)
-        destination.stars_empty = range(empty_stars)
-
-    return render(request, 'destinations.html', {
-        'destinations': destinations_list,
-        'show_all': show_all,
-    })
-
-class DestinationDetailView(generic.DetailView):
-    template_name = 'destination_detail.html'
-    model = models.Destination
-    context_object_name = 'destination'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        destination = self.get_object()
-        reviews = models.Review.objects.filter(destination=destination)
-        average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-
-        context['full_stars'] = range(int(average_rating))
-        context['empty_stars'] = range(5 - int(average_rating))
-        context['average_rating'] = average_rating
-
-        for review in reviews:
-            review.full_stars = range(review.rating)
-            review.empty_stars = range(5 - review.rating)
-
-        context['reviews'] = reviews
-        context['review_form'] = ReviewForm()
-        return context
-
-class DestinationCreateView(generic.CreateView):
-    model = models.Destination
-    template_name = 'destination_form.html'
-    fields = ['name', 'description', 'image']
-
-class DestinationUpdateView(generic.UpdateView):
-    model = models.Destination
-    template_name = 'destination_form.html'
-    fields = ['name', 'description', 'image']
-    success_url = reverse_lazy('destinations')
-
-class DestinationDeleteView(generic.DeleteView):
-    model = models.Destination
-    template_name = 'destination_confirm_delete.html'
-    success_url = reverse_lazy('destinations')
-
-class CruiseDetailView(generic.DetailView):
-    template_name = 'cruise_detail.html'
-    model = models.Cruise
-    context_object_name = 'cruise'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cruise = self.get_object()
-        reviews = Review.objects.filter(cruise=cruise)
-        average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-
-        context['full_stars'] = range(int(average_rating))
-        context['empty_stars'] = range(5 - int(average_rating))
-        context['average_rating'] = average_rating
-
-        for review in reviews:
-            review.full_stars = range(review.rating)
-            review.empty_stars = range(5 - review.rating)
-
-        context['reviews'] = reviews
-        context['review_form'] = ReviewForm()
-        return context
-
-class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
-    template_name = 'info_request_create.html'
-    model = models.InfoRequest
-    fields = ['name', 'email', 'cruise', 'notes']
-    success_url = reverse_lazy('index')
-    success_message = 'Thank you, %(name)s! We will email you when we have more information about %(cruise)s!'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        send_mail(
-            subject=f'Muchas gracias {form.instance.name}',
-            message=(
-                f"Gracias, {form.instance.name}, por tu Registro.\n\n"
-                f"Tu cuenta ha sido registrada con éxito. "
-                "Desde el equipo de Be Rural le agradecemos por usar nuestra aplicación."
-            ),
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[form.instance.email],
-            fail_silently=False,
-        )
-        return response
-    
 
 ### RESEÑAS DE LOS PUEBLOS
 def add_review(request, pk, model_type):
@@ -175,29 +71,7 @@ class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
         )
         return response
 
-
-# ### LOGIN para los usuarios 
-# def login_view(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         usuario = authenticate (request, email=email, password=password)  # Autenticación del usuario
-#         if usuario is not None:
-#             login(request, usuario)
-#             return redirect('pueblos_principal')  # Redirigir a la vista correcta
-        
-#         # try:
-#         #     usuario = Usuario.objects.get(email=email)
-#         #     if usuario.password == password:  # Comparación en texto plano
-#         #         login(request, usuario)  # Iniciar sesión manualmente
-#         #         return redirect('pueblos_principal')  # Redirigir a la vista correcta
-#         #     else:
-#         #         return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
-#         # except Usuario.DoesNotExist:
-#         #     return render(request, 'login_form.html', {'error': 'Correo electrónico o contraseña incorrecta.'})
     
-#     return render(request, 'login_form.html')
-
 from django.contrib.auth import login
 from .forms import LoginForm
 
@@ -215,14 +89,14 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(request, 'login_form.html', {'form': form})
+    return render(request, 'Login/login_form.html', {'form': form})
 
 
 
 
 def pueblos(request):
     show_all = request.GET.get('show_all', 'false') == 'true'
-    all_destinations = Destination.objects.annotate(average_rating=Avg('reviews__rating'))
+    all_destinations = Pueblo.objects.annotate(average_rating=Avg('reviews__rating'))
     if show_all:
         destinations_list = all_destinations
     else:
@@ -235,11 +109,11 @@ def pueblos(request):
         destination.stars_empty = range(empty_stars)
     
     pueblos_list = Pueblo.objects.all()  # Obtener todos los pueblos
-    return render(request, 'Pueblos_Principal.html', {'pueblos': pueblos_list})
+    return render(request, 'Pueblos/Pueblos_Principal.html', {'pueblos': pueblos_list})
 
 
 class PuebloDetailView(generic.DetailView):
-    template_name = 'pueblo_detail.html'
+    template_name = 'Pueblos/pueblo_detail.html'
     model = Pueblo
     context_object_name = 'pueblo'
     slug_field = "slug"  # Django buscará por este campo
@@ -276,14 +150,14 @@ def pueblos_por_comunidad(request, comunidad_id):
     comunidad = get_object_or_404(Comunidad, id=comunidad_id)
     pueblos = Pueblo.objects.filter(comunidad=comunidad)  # Obtener los pueblos de esa comunidad
     
-    return render(request, 'pueblos_por_comunidad.html', {
+    return render(request, 'Pueblos/pueblos_por_comunidad.html', {
         'comunidad': comunidad,
         'pueblos': pueblos
     })
 
 
 class UsuarioCreate(SuccessMessageMixin, generic.CreateView):
-    template_name = 'Registro.html'
+    template_name = 'Login/Registro.html'
     model = Usuario
     form_class = UsuarioForm
     success_url = reverse_lazy('login')  # redirige al login tras registrarse
@@ -338,7 +212,7 @@ def chat_view(request, chatroom_name='public-chat'):
             message.save()
 
             if request.headers.get('HX-Request'):
-                return render(request, 'chat_message.html', {
+                return render(request, 'Chats/chat_message.html', {
                     'message': message,
                     'user': request.user,
                     'just_added': True,
@@ -356,7 +230,7 @@ def chat_view(request, chatroom_name='public-chat'):
         'mis_chats': mis_chats,  # 👈 Aquí
     }
 
-    return render(request, 'chat.html', context)
+    return render(request, 'Chats/chat.html', context)
 
 @login_required
 def chat_con_pueblo_view(request, slug):
@@ -386,7 +260,7 @@ def chat_con_pueblo_view(request, slug):
             message.save()
 
             if request.headers.get('HX-Request'):
-                return render(request, 'chat_message.html', {
+                return render(request, 'Chats/chat_message.html', {
                     'message': message,
                     'user': request.user,
                     'just_added': True,
@@ -397,7 +271,7 @@ def chat_con_pueblo_view(request, slug):
     else:
         form = ChatMessageCreateForm()
 
-    return render(request, 'chat.html', {
+    return render(request, 'Chats/chat.html', {
         'messages': messages,
         'form': form,
         'user': request.user,
@@ -436,7 +310,7 @@ def chats_para_gestor(request):
 
     pueblo = getattr(request.user, 'pueblo_gestionado', None)
     if not pueblo:
-        return render(request, 'chats_gestor.html', {'mis_chats': []})
+        return render(request, 'Chats/chats_gestor.html', {'mis_chats': []})
 
     chats = ChatGroup.objects.filter(
         group_name__startswith=f'chat-{pueblo.slug}-',
@@ -444,7 +318,7 @@ def chats_para_gestor(request):
         members=request.user  # el gestor debe estar en el grupo
     )
 
-    return render(request, 'chats_gestor.html', {
+    return render(request, 'Chats/chats_gestor.html', {
         'mis_chats': chats,
         'pueblo': pueblo
     })
@@ -465,7 +339,7 @@ def editar_pueblo(request, slug):
     else:
         form = PuebloForm(instance=pueblo)
 
-    return render(request, 'Pueblos_editar.html', {'form': form, 'pueblo': pueblo})
+    return render(request, 'Pueblos/Pueblos_editar.html', {'form': form, 'pueblo': pueblo})
 
 
 
@@ -577,7 +451,7 @@ def solicitar_reset_password(request):
                 form.add_error('email', 'No existe un usuario con ese correo.')
     else:
         form = PasswordResetRequestForm()
-    return render(request, "solicitar_reset_password.html", {"form": form})
+    return render(request, "Contrasena/solicitar_reset_password.html", {"form": form})
 
 
 # views.py
@@ -600,5 +474,5 @@ def resetear_password(request, token):
     else:
         form = CambiarPasswordForm()
 
-    return render(request, "password_reset.html", {"form": form})
+    return render(request, "Contrasena/password_reset.html", {"form": form})
 

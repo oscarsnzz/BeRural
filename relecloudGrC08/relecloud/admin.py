@@ -65,23 +65,6 @@ admin.site.register(Usuario, UsuarioAdmin)
 
 # ------------------- Otros modelos -------------------
 
-@admin.register(models.Destination)
-class DestinationAdmin(admin.ModelAdmin):
-    list_display = ('name','description','image')
-    list_filter = ('name',)
-    search_fields = ('name','description')
-
-@admin.register(models.Cruise)
-class CruiseAdmin(admin.ModelAdmin):
-    list_display = ('name','description')
-    list_filter = ('name',)
-    search_fields = ('name','description')
-
-@admin.register(models.InfoRequest)
-class InfoRequestAdmin(admin.ModelAdmin):
-    list_display = ('name','email','cruise')
-    list_filter = ('cruise',)
-    search_fields = ('name','email')
 
 @admin.register(Pueblo)
 class PuebloAdmin(admin.ModelAdmin):

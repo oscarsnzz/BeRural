@@ -42,7 +42,7 @@ class ChatRoomConsumer(WebsocketConsumer):
             author=self.user
         )
 
-        html = render_to_string("chat_message.html", {
+        html = render_to_string("Chats/chat_message.html", {
             "message": message,
             "user": self.scope["user"],
             "just_added": True,
@@ -71,7 +71,7 @@ class ChatRoomConsumer(WebsocketConsumer):
 
         message = GroupMessage.objects.get(id=message_id)
 
-        html = render_to_string("chat_message.html", {
+        html = render_to_string("Chats/chat_message.html", {
             "message": message,
             "user": self.scope["user"],
             "just_added": True,
