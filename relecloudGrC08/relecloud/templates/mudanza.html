@@ -1,0 +1,336 @@
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mudanza</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+    }
+    /* Navbar fijo arriba */
+    .navbar {
+      position: sticky; top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .75rem 1rem;
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      z-index: 10;
+    }
+    .navbar .icon-btn {
+      font-size: 1.25rem;
+      color: #333;
+      padding: .5rem;
+      text-decoration: none;
+    }
+    .navbar .icon-btn:hover {
+      background: rgba(0,0,0,.05);
+      border-radius: 50%;
+    }
+    .navbar .title {
+      flex: 1;
+      text-align: center;
+      font-weight: 500;
+      color: #333;
+      margin: 0;
+    }
+
+    .container {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    /* Pestañas */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 1rem;
+    }
+    .tab {
+      padding: .5rem 1rem;
+      color: #666;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .tab.active {
+      color: #8BC34A;
+      border-bottom: 2px solid #8BC34A;
+    }
+
+    /* Contenido de pestañas */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Gráfico */
+    #progressChart {
+      max-width: 200px;
+      margin: 0 auto;
+    }
+    .legend {
+      margin-top: 1rem;
+      font-size: .9rem;
+      text-align: left;
+      display: inline-block;
+    }
+    .legend div {
+      display: flex;
+      align-items: center;
+      margin-bottom: .5rem;
+    }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      margin-right: .5rem;
+    }
+    .completed { background: #8BC34A; }
+    .pending   { background: #C8E6C9; }
+
+    /* Lista */
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 360px;
+      text-align: left;
+    }
+    .task-list li {
+      display: flex;
+      align-items: center;
+      padding: .75rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .checkbox-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      width: 100%;
+    }
+    .checkbox-wrapper input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      width: 0; height: 0;
+    }
+    .custom-checkbox {
+      width: 20px; height: 20px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox-wrapper input:checked + .custom-checkbox {
+      background: #8BC34A;
+      border-color: #8BC34A;
+    }
+    .checkbox-wrapper input:checked + .custom-checkbox::after {
+      content: '✓';
+      color: #fff;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* Bottom nav igual que en perfil */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-evenly;
+      padding: .75rem 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,.1);
+    }
+    .bottom-nav a {
+      color: #333;
+      text-decoration: none;
+      font-size: .85rem;
+      text-align: center;
+    }
+    .bottom-nav i {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: .25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="{% url 'pueblos_principal' %}" class="icon-btn">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <h5 class="title">Mudanza</h5>
+    <span class="icon-btn" style="visibility:hidden;">
+      <i class="fas fa-arrow-left"></i>
+    </span>
+  </nav>
+
+  <div class="container">
+    <!-- Pestañas -->
+    <div class="tabs">
+      <span class="tab" data-target="grafico" id="tab-grafico">Gráfico</span>
+      <span class="tab" data-target="lista"   id="tab-lista">Lista</span>
+    </div>
+
+    <!-- Contenido Gráfico -->
+    <div class="tab-content" id="grafico">
+      <canvas id="progressChart"></canvas>
+      <div class="legend">
+        <div><span class="dot completed"></span> Tareas completadas</div>
+        <div><span class="dot pending"></span> Tareas por completar</div>
+      </div>
+    </div>
+
+    <!-- Contenido Lista -->
+    <div class="tab-content" id="lista">
+      {# Form para añadir tareas #}
+      <form method="post" action="{% url 'add_tarea' %}" class="js-tarea-form">
+        {% csrf_token %}
+        <div style="display:flex; max-width:360px; margin:0 auto 1rem;">
+          <input
+            type="text"
+            name="nombre"
+            placeholder="Nueva tarea…"
+            required
+            style="flex:1; padding:.5rem; border:1px solid #ccc; border-radius:4px 0 0 4px;"
+          >
+          <button
+            type="submit"
+            style="padding:.5rem 1rem; border:none; background:#8BC34A; color:white; border-radius:0 4px 4px 0;"
+          >Añadir</button>
+        </div>
+      </form>
+
+      <ul class="task-list">
+        {% for tarea in tareas %}
+          <li style="display:flex; justify-content:space-between; align-items:center; padding:.75rem 0; border-bottom:1px solid #eee;">
+            
+            <div style="display:flex; align-items:center;">
+              {# checkbox que alterna completada #}
+              <form method="post" action="{% url 'toggle_tarea' tarea.pk %}" class="js-tarea-form">
+                {% csrf_token %}
+                <label class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    {% if tarea.completada %}checked{% endif %}
+                    onchange="this.form.submit()"
+                  >
+                  <span class="custom-checkbox"></span>
+                </label>
+              </form>
+
+              {# inline form de edición #}
+              <form method="post" action="{% url 'edit_tarea' tarea.pk %}" style="margin-left:12px; display:flex; align-items:center;" class="js-tarea-form">
+                {% csrf_token %}
+                <input
+                  type="text"
+                  name="nombre"
+                  value="{{ tarea.nombre }}"
+                  required
+                  style="border:none; background:transparent; font-size:1rem;"
+                >
+                <button type="submit" style="background:none; border:none; margin-left:4px;">
+                  <i class="fas fa-check"></i>
+                </button>
+              </form>
+            </div>
+
+            {# botón eliminar #}
+            <form method="post" action="{% url 'delete_tarea' tarea.pk %}" class="js-tarea-form">
+              {% csrf_token %}
+              <button type="submit" style="background:none; border:none; padding:4px;">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+
+          </li>
+        {% empty %}
+          <li>No hay tareas aún.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Navegación inferior -->
+  <div class="bottom-nav">
+    <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
+    <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
+    <a href="{% url 'perfil' %}"><i class="fas fa-user"></i>Perfil</a>
+  </div>
+
+  <!-- Scripts: Chart.js y lógica de pestañas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Función para activar pestañas
+      function activateTab(name) {
+        document.querySelectorAll(".tabs .tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        document.querySelector(`.tab[data-target="${name}"]`).classList.add("active");
+        document.getElementById(name).classList.add("active");
+      }
+
+      // Al cargar, usamos #hash o "grafico"
+      const initial = window.location.hash.substring(1) || "grafico";
+      activateTab(initial);
+
+      // Al clicar en una pestaña cambiamos hash y activamos
+      document.querySelectorAll(".tabs .tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.target;
+          // actualizamos el hash para poder refrescar siempre a la pestaña correcta
+          window.location.hash = target;
+          if (target === "grafico") {
+            // si es la pestaña de gráfico, recargamos la página entera 
+            // (traerá completed/pending nuevos y al recargar el script abrirá "grafico")
+            window.location.reload();
+            return;
+          }
+          // para la pestaña lista no recargamos, solo alternamos contenido
+          activateTab(target);
+        });
+      });
+
+      // Iniciar Chart.js
+      const completedCount = {{ completed }};
+      const pendingCount   = {{ pending }};
+      const ctx = document.getElementById("progressChart").getContext("2d");
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Completadas","Pendientes"],
+          datasets: [{ data: [completedCount, pendingCount], backgroundColor: ['#8BC34A','#C8E6C9'], borderWidth: 0 }]
+        },
+        options: { cutout: "70%", plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+      });
+
+      // ———> Insertar campo oculto 'tab' en TODOS los forms
+      document.querySelectorAll("form").forEach(form => {
+        const hidden = document.createElement("input");
+        hidden.type  = "hidden";
+        hidden.name  = "tab";
+        form.appendChild(hidden);
+        form.addEventListener("submit", () => {
+          hidden.value = window.location.hash.substring(1) || "grafico";
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
+
+{% endblock %}

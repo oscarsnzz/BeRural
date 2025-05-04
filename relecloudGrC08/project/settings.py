@@ -13,7 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+import environ 
+env = environ.Env()
+environ.Env.read_env()
+
+ENVIROMENT = env('ENVIROMENT', default="production")  # 'development' or 'production'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+ENVIROMENT = "development"  # Cambia esto a 'development' para desarrollo local
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -21,10 +27,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-1ob-uoz1^jeo-l%ns4@9_i&81$6t%k7%3h(b4(oe6l19!x1@4#"
+# SECRET_KEY = "django-insecure-1ob-uoz1^jeo-l%ns4@9_i&81$6t%k7%3h(b4(oe6l19!x1@4#"
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+AUTH_USER_MODEL = 'relecloud.Usuario'  # Ya que usas un modelo de usuario personalizado
+
+AUTHENTICATION_BACKENDS = [
+    'relecloud.backends.EmailBackend',  # el backend que acabamos de crear
+]
+
 
 ALLOWED_HOSTS = ['rodrigo-releclouud.azurewebsites.net','localhost', '127.0.0.1']
 
@@ -33,6 +47,8 @@ CSRF_TRUSTED_ORIGINS = ['https://rodrigo-releclouud.azurewebsites.net']
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -42,6 +58,11 @@ INSTALLED_APPS = [
     "relecloud.apps.RelecloudConfig",
     'crispy_forms',
     'crispy_bootstrap5',
+    'django_htmx',
+    'cloudinary',
+    'cloudinary_storage',
+
+
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap5"]
@@ -51,15 +72,15 @@ ROOT_URLCONF = "project.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'relecloud' / 'templates'],  # Añadir esta ruta
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -74,27 +95,47 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
-WSGI_APPLICATION = "project.wsgi.application"
+# WSGI_APPLICATION = "project.wsgi.application"
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+ASGI_APPLICATION = "project.asgi.application"
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',
-        'USER': 'Rodrigo',
-        'PASSWORD': "1234ASDF@",
-        'HOST': 'base-datos-practica.postgres.database.azure.com',
-        'PORT': '5432',
-        'OPTIONS': {
-             'sslmode': 'require',  # Habilita SSL,
-             }
+if ENVIROMENT == 'development':
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
     }
-}
+else :
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(env('REDIS_URL'))],
+            },
+        }
+    }
 
+
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": "mydatabase",
+if ENVIROMENT == 'development':
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "mydatabase",
+        }
+    }
+else:
+   import dj_database_url
+   DATABASES = {
+       'default': dj_database_url.parse(env('DATABASE_URL')),
+   }
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -137,7 +178,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploaded files like images)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
+if ENVIROMENT == 'development':
+   MEDIA_ROOT = BASE_DIR / 'media'
+else:
+   default_storage = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+   CLOUDINARY_STORAGE = {
+       'CLOUDINARY_URL': env('CLOUDINARY_URL')
+   }
+
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

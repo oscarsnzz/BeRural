@@ -1,0 +1,11 @@
+{% if es_mio or message.author.id == user.id %}
+    <div class="message me {% if just_added %}fade-in-up{% endif %}" data-id="{{ message.id }}">
+        {{ message.body }}
+        <div class="author-info">Tú</div>
+    </div>
+{% else %}
+    <div class="message other {% if just_added %}fade-in-up{% endif %}" data-id="{{ message.id }}">
+        {{ message.body }}
+        <div class="author-info">{{ message.author.name }}</div>
+    </div>
+{% endif %}

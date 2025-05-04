@@ -1,82 +1,171 @@
 {% load static %}
-
 <html>
 <head>
     <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <link rel="icon" href="{% static 'res/img/image.png' %}" type="image/png">
+
     <title>
         {% block title %}
-        ReleCloud - Expand your horizons
+        Be Rural 
         {% endblock %}
     </title>
+    <style>
+        {% if request.path == '/' %}
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        {% elif request.path == '/accounts/login/' or request.path == '/Registro/' or request.path == '/solicitar-reset-password/' %}
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        input[type="tel"] {
+            color: black;
+            background-color: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+        textarea {
+            color: black;
+            background-color: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+        label {
+            color: white;
+        }
+        {% endif %}
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-translucent-secondary">
-        <img src="{% static 'res/img/small-logo.png' %}" width="60" height="auto" alt="Rocket ship logo" />
-        <a class="navbar-brand tk-elevon" href="{% url 'index' %}">&nbsp; ReleCloud Space Tourism</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
-            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'info_request' %}">Request Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'destinations' %}">Destinations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <main role="main">
-        <div class="main-header" style="background-image: url('{% static "res/img/cosmos-db.jpeg" %}'); background-size: cover;)">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <img src="{% static 'res/img/bit_cosmos.png' %}" class="img img-fluid" />
-                    </div>
-                    <div class="col-md-8 ml-md-auto align-self-center">
-                        <h1 class="display-1">Expand your horizons</h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{message.tags}}" role="alert">
-            <p>{{ message }}</p>
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        <div class="container">
-            <br>
+<main role="main">
+    <div class="main-header" style="position: relative; background-image: url('{% static "res/img/priego.jpg" %}'); background-size: cover; height: 100vh; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);"></div>
+        <div class="container" style="position: relative; z-index: 1;">
             <div class="row">
                 <div class="col-md-4">
-                    {% block left_image %}
-                    <img src="{% static 'res/img/astronaut.jpeg' %}" alt="Astronaut image placeholder" class="img-fluid">
-                    {% endblock %}
+                    <img src="{% static 'res/img/image.png' %}" class="img img-fluid" />
                 </div>
-                <div class="col-md-8">
-                    {% block content %}
-                    <h1 class="display-4 tk-elevon">Lorem Ipsum Dolor</h1>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-                    {% endblock %}
+                <div class="col-md-8 ml-md-auto align-self-center text-center">
+
+                    {% if request.path == '/' %}
+                        <h1 class="display-1 text-white">Inicio de sesión</h1>
+                        <div class="mt-4">
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Iniciar sesión</a>
+                            <a href="{% url 'Registro' %}" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
+                        </div>
+
+                    {% elif request.path == '/accounts/login/' %}
+                        <div style="overflow:hidden">
+                            <h1 class="display-1 text-white">Iniciar sesión</h1>
+                            <div class="mt-4">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button type="submit" class="btn btn-primary btn-lg">Iniciar sesión</button>
+                                </form>
+
+                                {% if form.errors %}
+                                    <div class="alert alert-danger mt-3">
+                                        <ul>
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                            {% for error in form.non_field_errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                <p class="text-white mt-3">¿No tienes cuenta? <a href="{% url 'Registro' %}">Regístrate aquí</a></p>
+                                <p class="text-white mt-3">¿Olvidaste tu contraseña? <a href="{% url 'solicitar-reset-password' %}">Recupera aquí</a></p>
+                            </div>
+                        </div>
+
+                    {% elif request.path == '/Registro/' %}
+                        <div style="overflow:hidden">
+                            <h1 class="display-1 text-white">Registro</h1>
+                            <div class="mt-4">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                                </form>
+
+                                {% if form.errors %}
+                                    <div class="alert alert-danger mt-3">
+                                        <ul>
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                            {% for error in form.non_field_errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                <p class="text-white mt-3">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
+                            </div>
+                        </div>
+
+                    {% elif request.path == '/solicitar-reset-password/' %}
+                        {% if form %}
+                            <div style="overflow:hidden">
+                                <h1 class="display-1 text-white">Recuperar Contraseña</h1>
+                                <p class="text-white mt-3">Introduce tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
+                                <div class="mt-4">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <button type="submit" class="btn btn-primary btn-lg">Enviar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div style="overflow:hidden">
+                                <h1 class="display-1 text-white">Correo Enviado</h1>
+                                <p class="text-white mt-4">Si el correo existe, recibirás un enlace para restablecer tu contraseña.</p>
+                                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg mt-3">Volver al inicio de sesión</a>
+                            </div>
+                        {% endif %}
+
+                    {% elif '/reset-password/' in request.path %}
+                        <div style="overflow:hidden">
+                            <h1 class="display-1 text-white">Restablecer Contraseña</h1>
+                            <p class="text-white mt-3">Introduce tu nueva contraseña.</p>
+                            <div class="mt-4">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button type="submit" class="btn btn-primary btn-lg">Guardar nueva contraseña</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                    {% else %}
+                        <h1 class="display-1 text-white">Be Rural</h1>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
-    </main>
-
-    <footer class="container">
-        <p>&copy; Microsoft 2021</p>
-    </footer>
+    </div>
+</main>
 </body>
-</html>
+</html> 
+
