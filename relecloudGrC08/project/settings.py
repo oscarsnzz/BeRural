@@ -19,7 +19,7 @@ environ.Env.read_env()
 
 ENVIROMENT = env('ENVIROMENT', default="production")  # 'development' or 'production'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-ENVIROMENT = "development"  # Cambia esto a 'development' para desarrollo local
+ # Cambia esto a 'development' para desarrollo local
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -40,9 +40,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-ALLOWED_HOSTS = ['rodrigo-releclouud.azurewebsites.net','localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['berural.onrender.com','localhost', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://rodrigo-releclouud.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://berural.onrender.com']
 
 # Application definition
 
