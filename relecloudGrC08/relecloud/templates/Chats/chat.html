@@ -260,7 +260,7 @@
 
     window.addEventListener("load", scrollChatToBottom);
 
-    let socket = new WebSocket("ws://" + window.location.host + "/ws/chatroom/{{ chatroom_name }}/");
+    let socket = new WebSocket((window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host + "/ws/chatroom/{{ chatroom_name }}/");
 
     socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
