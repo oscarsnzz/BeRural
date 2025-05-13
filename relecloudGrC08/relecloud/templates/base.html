@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'res/css/base.css' %}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
@@ -13,159 +14,142 @@
         {% endblock %}
     </title>
     <style>
-        {% if request.path == '/' %}
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+        body {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('{% static "res/img/priego.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-        {% elif request.path == '/accounts/login/' or request.path == '/Registro/' or request.path == '/solicitar-reset-password/' %}
-        input[type="email"],
-        input[type="password"],
-        input[type="text"],
-        input[type="tel"] {
-            color: black;
-            background-color: white;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+        .card {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 60px;
+            max-width: 600px;
             width: 100%;
-        }
-        textarea {
-            color: black;
-            background-color: white;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 100%;
-        }
-        label {
             color: white;
         }
-        {% endif %}
+        .card input[type="email"],
+        .card input[type="password"],
+        .card input[type="text"],
+        .card input[type="tel"] {
+            color: #222;
+            font-size: 18px;
+            padding: 12px;
+        }
+        .card label {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .card h1 {
+            font-size: 30px;
+        }
+        .card p {
+            font-size: 16px;
+        }
+        .btn {
+            font-size: 18px;
+            padding: 14px 28px;
+        }
+        .link {
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
-<main role="main">
-    <div class="main-header" style="position: relative; background-image: url('{% static "res/img/priego.jpg" %}'); background-size: cover; height: 100vh; overflow: hidden;">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);"></div>
-        <div class="container" style="position: relative; z-index: 1;">
-            <div class="row">
-                <div class="col-md-4">
-                    <img src="{% static 'res/img/image.png' %}" class="img img-fluid" />
+<main role="main" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;">
+    {% if request.path == '/accounts/login/' or request.path == '/Registro/' or request.path == '/solicitar-reset-password/' or '/reset-password/' in request.path %}
+    <div class="card">
+        <div class="logo-container" style="text-align: center; margin-bottom: 20px;">
+            <img src="{% static 'res/img/image.png' %}" alt="Logo" style="width: 140px;">
+        </div>
+
+        {% if request.path == '/accounts/login/' %}
+            <h1 style="text-align: center; font-weight: bold;">Iniciar Sesión</h1>
+            <p style="text-align: center;">Inicia sesión para poder usar la app</p>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Inicia Sesión</button>
+            </form>
+            {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-                <div class="col-md-8 ml-md-auto align-self-center text-center">
+            {% endif %}
+            <a href="{% url 'solicitar-reset-password' %}" class="link">¿Has olvidado tu contraseña?</a>
+            <a href="{% url 'Registro' %}" class="link">¿No tienes cuenta todavía? Regístrate</a>
 
-                    {% if request.path == '/' %}
-                        <h1 class="display-1 text-white">Inicio de sesión</h1>
-                        <div class="mt-4">
-                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Iniciar sesión</a>
-                            <a href="{% url 'Registro' %}" class="btn btn-outline-light btn-lg ml-2">Registrarse</a>
-                        </div>
-
-                    {% elif request.path == '/accounts/login/' %}
-                        <div style="overflow:hidden">
-                            <h1 class="display-1 text-white">Iniciar sesión</h1>
-                            <div class="mt-4">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <button type="submit" class="btn btn-primary btn-lg">Iniciar sesión</button>
-                                </form>
-
-                                {% if form.errors %}
-                                    <div class="alert alert-danger mt-3">
-                                        <ul>
-                                            {% for field in form %}
-                                                {% for error in field.errors %}
-                                                    <li>{{ error }}</li>
-                                                {% endfor %}
-                                            {% endfor %}
-                                            {% for error in form.non_field_errors %}
-                                                <li>{{ error }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
-
-                                <p class="text-white mt-3">¿No tienes cuenta? <a href="{% url 'Registro' %}">Regístrate aquí</a></p>
-                                <p class="text-white mt-3">¿Olvidaste tu contraseña? <a href="{% url 'solicitar-reset-password' %}">Recupera aquí</a></p>
-                            </div>
-                        </div>
-
-                    {% elif request.path == '/Registro/' %}
-                        <div style="overflow:hidden">
-                            <h1 class="display-1 text-white">Registro</h1>
-                            <div class="mt-4">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
-                                </form>
-
-                                {% if form.errors %}
-                                    <div class="alert alert-danger mt-3">
-                                        <ul>
-                                            {% for field in form %}
-                                                {% for error in field.errors %}
-                                                    <li>{{ error }}</li>
-                                                {% endfor %}
-                                            {% endfor %}
-                                            {% for error in form.non_field_errors %}
-                                                <li>{{ error }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
-
-                                <p class="text-white mt-3">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
-                            </div>
-                        </div>
-
-                    {% elif request.path == '/solicitar-reset-password/' %}
-                        {% if form %}
-                            <div style="overflow:hidden">
-                                <h1 class="display-1 text-white">Recuperar Contraseña</h1>
-                                <p class="text-white mt-3">Introduce tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
-                                <div class="mt-4">
-                                    <form method="POST">
-                                        {% csrf_token %}
-                                        {{ form.as_p }}
-                                        <button type="submit" class="btn btn-primary btn-lg">Enviar</button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div style="overflow:hidden">
-                                <h1 class="display-1 text-white">Correo Enviado</h1>
-                                <p class="text-white mt-4">Si el correo existe, recibirás un enlace para restablecer tu contraseña.</p>
-                                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg mt-3">Volver al inicio de sesión</a>
-                            </div>
-                        {% endif %}
-
-                    {% elif '/reset-password/' in request.path %}
-                        <div style="overflow:hidden">
-                            <h1 class="display-1 text-white">Restablecer Contraseña</h1>
-                            <p class="text-white mt-3">Introduce tu nueva contraseña.</p>
-                            <div class="mt-4">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <button type="submit" class="btn btn-primary btn-lg">Guardar nueva contraseña</button>
-                                </form>
-                            </div>
-                        </div>
-                        
-                    {% else %}
-                        <h1 class="display-1 text-white">Be Rural</h1>
-                    {% endif %}
-
+        {% elif request.path == '/Registro/' %}
+            <h1 style="text-align: center; font-weight: bold;">Registro</h1>
+            <p style="text-align: center;">Crea tu cuenta para comenzar</p>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Registrarse</button>
+            </form>
+            {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            </div>
+            {% endif %}
+            <a href="{% url 'login' %}" class="link">¿Ya tienes cuenta? Inicia sesión</a>
+
+        {% elif request.path == '/solicitar-reset-password/' %}
+            {% if form %}
+                <h1 style="text-align: center; font-weight: bold;">Recuperar Contraseña</h1>
+                <p style="text-align: center;">Introduce tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn">Enviar</button>
+                </form>
+            {% else %}
+                <h1 style="text-align: center; font-weight: bold;">Correo Enviado</h1>
+                <p style="text-align: center;">Si el correo existe, recibirás un enlace para restablecer tu contraseña.</p>
+                <a href="{% url 'login' %}" class="link">Volver al inicio de sesión</a>
+            {% endif %}
+
+        {% elif '/reset-password/' in request.path %}
+            <h1 style="text-align: center; font-weight: bold;">Restablecer Contraseña</h1>
+            <p style="text-align: center;">Introduce tu nueva contraseña.</p>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Guardar nueva contraseña</button>
+            </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <!-- Página de inicio -->
+    <div style="text-align: center; color: white; background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('{% static "res/img/priego.jpg" %}'); background-size: cover; background-position: center; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <img src="{% static 'res/img/image.png' %}" alt="Be Rural" style="width: 180px; margin-bottom: 30px;">
+        <h1 style="font-size: 50px; font-weight: bold; margin-bottom: 30px; text-shadow: 2px 2px 6px rgba(0,0,0,0.5);">Bienvenido a Be Rural</h1>
+        <div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center;">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg" style="padding: 16px 28px; background-color: #4caf50; border: none; color: white; border-radius: 10px; font-weight: bold; font-size: 18px;">Iniciar sesión</a>
+            <a href="{% url 'Registro' %}" class="btn btn-outline-light btn-lg" style="padding: 16px 28px; background-color: white; color: #4caf50; border-radius: 10px; font-weight: bold; font-size: 18px;">Registrarse</a>
         </div>
     </div>
+    {% endif %}
 </main>
 </body>
-</html> 
-
+</html>
