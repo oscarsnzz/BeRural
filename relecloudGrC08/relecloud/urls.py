@@ -46,4 +46,8 @@ urlpatterns = [
     ## Chatbot (nuevo)
     path('chatbot/', views.chatbot_view, name='chatbot'),
 
+    # Verificar correos duplicados
+    path("verificar-email/", views.verificar_email, name="verificar_email"),
+
+
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
