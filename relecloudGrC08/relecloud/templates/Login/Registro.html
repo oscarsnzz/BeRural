@@ -3,12 +3,68 @@
 {% block title %}Registro de Usuario{% endblock %}
 
 {% block content %}
-    <div class="container mt-5"> <!-- Ajuste para margen superior debido a la barra de navegación fija -->
+    <div class="container mt-5">
         <h1 class="display-4">Formulario de Registro</h1>
-        <form method="post">
+        <form method="post" id="registroForm">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="form-group">
+                <label for="id_name">Nombre</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="id_apellidos">Apellidos</label>
+                {{ form.apellidos }}
+            </div>
+            <div class="form-group">
+                <label for="id_telefono">Teléfono</label>
+                {{ form.telefono }}
+            </div>
+            <div class="form-group">
+                <label for="id_email">Correo electrónico</label>
+                {{ form.email }}
+            </div>
+            <div class="form-group">
+                <label for="id_password">Contraseña</label>
+                {{ form.password }}
+            </div>
+            <div class="form-group">
+                <label for="id_password2">Repite la contraseña</label>
+                {{ form.password2 }}
+            </div>
+            <div id="error-message" style="color: red; font-weight: bold; margin-bottom: 10px;"></div>
             <button type="submit" class="btn btn-primary">Registrar</button>
         </form>
     </div>
+
+    <script>
+      document.getElementById("registroForm").addEventListener("submit", function (e) {
+          const email = document.getElementById("id_email").value;
+          const password = document.getElementById("id_password").value;
+          const password2 = document.getElementById("id_password2").value;
+          const errorDiv = document.getElementById("error-message");
+
+          errorDiv.innerText = "";
+
+          if (password !== password2) {
+              e.preventDefault();
+              errorDiv.innerText = "Las contraseñas no coinciden.";
+              return;
+          }
+
+          // Validación de email ya registrado (síncrona bloqueando envío si es duplicado)
+          e.preventDefault(); // detenemos primero
+          fetch(`/verificar-email/?email=${encodeURIComponent(email)}`)
+              .then(response => response.json())
+              .then(data => {
+                  if (data.exists) {
+                      errorDiv.innerText = "Este correo electrónico ya está registrado.";
+                  } else {
+                      e.target.submit();
+                  }
+              })
+              .catch(() => {
+                  errorDiv.innerText = "Error al verificar el correo. Intenta de nuevo.";
+              });
+      });
+    </script>
 {% endblock %}

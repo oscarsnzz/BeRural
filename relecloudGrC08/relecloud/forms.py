@@ -17,6 +17,8 @@ class ReviewForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write your comment here...'}),
         }
 
+
+
 class UsuarioForm(forms.ModelForm):
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repite la contraseña', widget=forms.PasswordInput)
@@ -26,24 +28,27 @@ class UsuarioForm(forms.ModelForm):
         fields = ['name', 'apellidos', 'telefono', 'email', 'password']
 
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data.get('email')
         if Usuario.objects.filter(email=email).exists():
             raise ValidationError("Este correo electrónico ya está registrado.")
         return email
 
-    def clean_password2(self):
-        password = self.cleaned_data['password']
-        password2 = self.cleaned_data['password2']
-        if password != password2:
-            raise ValidationError("Las contraseñas no coinciden.")
-        return password2
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password2 = cleaned_data.get('password2')
+
+        if password and password2 and password != password2:
+            self.add_error('password2', "Las contraseñas no coinciden.")
+        return cleaned_data
 
     def save(self, commit=True):
         usuario = super().save(commit=False)
-        usuario.set_password(self.cleaned_data['password'])  # Encriptar correctamente la contraseña
+        usuario.set_password(self.cleaned_data['password'])  # Encripta la contraseña correctamente
         if commit:
             usuario.save()
         return usuario
+
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label='Correo Electrónico')
