@@ -485,3 +485,9 @@ def chatbot_view(request):
         contexto = recuperar_contexto(pregunta)
         respuesta = llamar_llm_openrouter(contexto, pregunta)
     return render(request, "chatbot.html", {"pregunta": pregunta, "respuesta": respuesta})
+
+
+def verificar_email(request):
+    email = request.GET.get("email", "")
+    existe = Usuario.objects.filter(email=email).exists()
+    return JsonResponse({'exists': existe})
