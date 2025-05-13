@@ -21,6 +21,8 @@ from .models import TareaMudanza
 from .forms import TareaMudanzaForm
 from django.urls import reverse
 from django.http import JsonResponse
+from django.shortcuts import render
+from .utils_llm import recuperar_contexto, llamar_llm_openrouter
 
 
 # Create your views here.
@@ -476,3 +478,10 @@ def resetear_password(request, token):
 
     return render(request, "Contrasena/password_reset.html", {"form": form})
 
+def chatbot_view(request):
+    respuesta, pregunta = "", ""
+    if request.method == "POST":
+        pregunta = request.POST.get("pregunta", "")
+        contexto = recuperar_contexto(pregunta)
+        respuesta = llamar_llm_openrouter(contexto, pregunta)
+    return render(request, "chatbot.html", {"pregunta": pregunta, "respuesta": respuesta})

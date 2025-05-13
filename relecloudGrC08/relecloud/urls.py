@@ -43,4 +43,7 @@ urlpatterns = [
     path("solicitar-reset-password/", views.solicitar_reset_password, name="solicitar-reset-password"),
     path("reset-password/<str:token>/", views.resetear_password, name="reset-password"),
 
+    ## Chatbot (nuevo)
+    path('chatbot/', views.chatbot_view, name='chatbot'),
+
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot - Be Rural</title>
+</head>
+<body>
+    <h1>Chatbot informativo de pueblos</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="pregunta" placeholder="¿Qué quieres saber?" value="{{ pregunta }}" style="width: 400px;">
+        <button type="submit">Enviar</button>
+    </form>
+
+    {% if respuesta %}
+        <h3>Respuesta:</h3>
+        <p>{{ respuesta }}</p>
+    {% endif %}
+</body>
+</html>
