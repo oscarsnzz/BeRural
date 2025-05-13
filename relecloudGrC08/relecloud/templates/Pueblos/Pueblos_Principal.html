@@ -16,44 +16,50 @@
             margin: 0px ;
             padding: 0;
             background-color: #f8f8f8;
+            overflow: hidden;
         }
         .navbar {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             background-color: white;
-            padding: 10px;
+            padding: 10px 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
             background-color: white;
             display: flex;
-            justify-content: space-around; /* Espacia los elementos uniformemente */
-            align-items: center; /* Centra verticalmente */
+            justify-content: space-around;
             padding: 10px 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         .bottom-nav a {
+            flex: 1;
+            text-align: center;
             text-decoration: none;
             color: black;
-            text-align: center;
-            font-size: 14px;
-            flex: 1; /* Para que cada enlace ocupe el mismo espacio */
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        
+
         .bottom-nav i {
-            display: block;
             font-size: 20px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
+
         
         .navbar img {
             height: 50px;
             margin-right: 10px;
+            margin-left: 0;
         }
         .search-bar {
             flex-grow: 1;
@@ -68,7 +74,7 @@
             padding: 20px;
         }
         .map-container {
-            width: 80%;
+            width: 95%;
             margin: auto;
         }
         path {
@@ -90,27 +96,6 @@
             display: none;
             font-size: 14px;
         }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .bottom-nav a {
-            text-decoration: none;
-            color: black;
-            text-align: center;
-            font-size: 14px;
-        }
-        .bottom-nav i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
 
     </style>
 </head>
@@ -118,7 +103,10 @@
     <div class="navbar d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
             <img src="{% static 'res/img/image.png' %}" class="img img-fluid" alt="Be Rural" style="height: 50px;"/>
-            <input type="text" class="search-bar ml-3" placeholder="Buscar pueblos..."> 
+        </div>
+
+        <div style="flex-grow: 1; text-align: center;">
+            <h2 style="margin: 0;">Catálogo de pueblos</h2>
         </div>
     
         {% if user.is_authenticated %}
@@ -134,7 +122,6 @@
     
 
     <div class="container">
-        <h2>Catálogo de pueblos</h2>
         <div class="map-container">
             <svg id="mapa-espana" viewBox="0 0 800 600">
                 <!-- Aquí debes insertar el contenido de tu SVG -->
@@ -273,6 +260,7 @@
         <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
         <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>
         <a href="{% url 'perfil'%}"><i class="fas fa-user"></i>Perfil</a>
+        <a href="{% url 'chatbot'%}"><i class="fa-solid fa-robot"></i>Be Rural GPT</a>
     </div>
 </body>
 
