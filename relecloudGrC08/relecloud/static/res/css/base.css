@@ -64,7 +64,7 @@ html, body {
 .auth-form label {
     display: block;
     font-size: 14px;
-    color: #333;
+    color: white; /* <--- actualizado aquí */
     margin-bottom: 6px;
     font-weight: 500;
 }
