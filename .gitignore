@@ -7,7 +7,6 @@ __pycache__/
 # Entornos virtuales
 .venv/
 venv/
-relecloud/venv
 
 # Archivos de configuración del sistema operativo
 .DS_Store
@@ -31,7 +30,7 @@ Thumbs.db
 
 
 # Archivos sensibles
-.env
+
 
 
 # Archivos y directorios de Python compilados
@@ -42,7 +41,6 @@ __pycache__/
 # Archivos de entorno virtual
 env/
 venv/
-ENV/
 .venv/
 .env/
 
