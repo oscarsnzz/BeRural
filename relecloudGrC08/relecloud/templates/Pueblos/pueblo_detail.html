@@ -2,244 +2,219 @@
 
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ pueblo.name }}</title>
-    <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ pueblo.name }}</title>
+  <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 
-    <style>
-      /* Hace que el contenido ocupe toda la pantalla */
-      body {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh; /* Ocupar al menos toda la pantalla */
-          margin: 0;
-          padding: 0;
-          background-image: url('{{ pueblo.image.url }}');
-          background-size: cover;
-          background-position: center;
-          background-attachment: fixed;
-      }
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-image: url('{{ pueblo.image.url }}');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
 
-      /* Capa oscura sobre la imagen de fondo */
-      .overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.5);
-      }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
 
-      /* Contenedor principal que empuja el footer hacia abajo */
-      .container {
-          flex: 1; /* Empuja el contenido para que el footer quede abajo */
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding-bottom: 80px; /* Evita que el contenido toque el footer */
-      }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 80px;
+    }
 
-      /* Card de contenido */
-      .content-card {
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(5px);
-          border-radius: 12px;
-          padding: 20px;
-          max-width: 800px;
-          width: 90%;
-          margin: 20px auto;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
+    .content-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(5px);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 800px;
+      width: 90%;
+      margin: 20px auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
-      /* Imagen dentro del card */
-      .card-img-top {
-          border-radius: 12px;
-          width: 100%;
-          height: 250px;
-          object-fit: cover;
-          display: block;
-          margin-left: auto;
-          margin-right: auto;
-      }
+    .card-img-top {
+      border-radius: 12px;
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-      /* Estilos para las reviews */
-      .review-card {
-          max-width: 600px;
-          width: 90%;
-          margin: 20px auto;
-          padding: 20px;
-          background-color: rgba(255, 255, 255, 0.9);
-          border-radius: 12px;
-          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-      }
+    .review-card {
+      max-width: 600px;
+      width: 90%;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
-      {% comment %} <-/* Barra de navegación inferior (Footer) */ {% endcomment %}
-      .bottom-nav {
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-          background-color: white;
-          display: flex;
-          justify-content: space-around;
-          padding: 15px 0;
-          box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-      }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-      .bottom-nav a {
-          text-decoration: none;
-          color: black;
-          text-align: center;
-          font-size: 14px;
-      }
+    .bottom-nav a {
+      text-decoration: none;
+      color: black;
+      text-align: center;
+      font-size: 14px;
+    }
 
-      .bottom-nav i {
-          display: block;
-          font-size: 20px;
-          margin-bottom: 5px;
-      }
-    </style>
-  </head>
+    .bottom-nav i {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
 
-  <body>
-    <div class="overlay"></div>
-    <!-- Fondo oscuro semitransparente -->
+    .back-link {
+      color: white;
+      font-size: 18px;
+      text-decoration: none;
+      font-weight: bold;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
 
-    <!-- Contenedor principal que empuja el footer hacia abajo -->
-    <div class="container">
-      <div class="content-card">
-        <h1 class="text-center">{{ pueblo.name }}</h1>
+    .back-link i {
+      margin-right: 5px;
+    }
+  </style>
+</head>
 
-        <img
-          src="{{ pueblo.image.url }}"
-          class="card-img-top"
-          alt="Imagen de {{ pueblo.name }}"
-        />
+<body>
+  <div class="overlay"></div>
 
-        <h3>Descripcion</h3>
-        {% if request.user == pueblo.gestor %}
-        <div style="text-align: right; margin-bottom: 10px">
-          <a
-            href="{% url 'editar-pueblo' pueblo.slug %}"
-            style="
-              background-color: #facc15;
-              color: #000;
-              padding: 8px 16px;
-              border-radius: 8px;
-              font-weight: bold;
-              text-decoration: none;
-            "
-          >
-            <i class="fas fa-edit"></i> Editar pueblo
-          </a>
-        </div>
-        {% endif %}
+  <!-- Botón de retroceso -->
+  <a href="{% url 'pueblos_por_comunidad' pueblo.comunidad.id %}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver
+  </a>
 
-        <p>{{ pueblo.descripcion }}</p>
-        <h3>Servicios</h3>
+  <div class="container">
+    <div class="content-card">
+      <h1 class="text-center">{{ pueblo.name }}</h1>
 
-        <p>{{ pueblo.servicios }}</p>
+      <img src="{{ pueblo.image.url }}" class="card-img-top" alt="Imagen de {{ pueblo.name }}" />
 
-        <h3>Incentivos</h3>
+      <h3>Descripcion</h3>
+      {% if request.user == pueblo.gestor %}
+      <div style="text-align: right; margin-bottom: 10px">
+        <a href="{% url 'editar-pueblo' pueblo.slug %}" style="background-color: #facc15; color: #000; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+          <i class="fas fa-edit"></i> Editar pueblo
+        </a>
+      </div>
+      {% endif %}
 
-        <p>{{ pueblo.incentivos }}</p>
-        <h3>Actividades</h3>
+      <p>{{ pueblo.descripcion }}</p>
 
-        <p>{{ pueblo.actividades }}</p>
+      <h3>Servicios</h3>
+      <p>{{ pueblo.servicios }}</p>
 
-        <h2>Reviews</h2>
-        <p>
-          Valoraciones: {% for _ in full_stars %}
+      <h3>Incentivos</h3>
+      <p>{{ pueblo.incentivos }}</p>
+
+      <h3>Actividades</h3>
+      <p>{{ pueblo.actividades }}</p>
+
+      <h2>Reviews</h2>
+      <p>
+        Valoraciones:
+        {% for _ in full_stars %}
           <i class="fas fa-star text-warning"></i>
-          {% endfor %} {% for _ in empty_stars %}
+        {% endfor %}
+        {% for _ in empty_stars %}
           <i class="far fa-star text-warning"></i>
-          {% endfor %}
-        </p>
+        {% endfor %}
+      </p>
 
-        <div class="review-list">
-          {% for review in reviews %}
-          <div class="card review-card">
-            <div class="card-body">
-              <div>
-                {% for _ in review.full_stars %}
+      <div class="review-list">
+        {% for review in reviews %}
+        <div class="card review-card">
+          <div class="card-body">
+            <div>
+              {% for _ in review.full_stars %}
                 <i class="fas fa-star text-warning"></i>
-                {% endfor %} {% for _ in review.empty_stars %}
+              {% endfor %}
+              {% for _ in review.empty_stars %}
                 <i class="far fa-star text-warning"></i>
-                {% endfor %}
-              </div>
-              <p>{{ review.comment }}</p>
+              {% endfor %}
             </div>
+            <p>{{ review.comment }}</p>
           </div>
-          {% empty %}
-          <p>Aún no hay opiniones sobre este pueblo.</p>
-          {% endfor %}
         </div>
+        {% empty %}
+        <p>Aún no hay opiniones sobre este pueblo.</p>
+        {% endfor %}
+      </div>
 
-        <!-- Formulario para agregar reseña -->
-        <h3>Añadir una reseña</h3>
-        <form method="post" action="{% url 'add_review' pueblo.pk 'pueblo' %}">
-          {% csrf_token %}
+      <!-- Formulario para agregar reseña -->
+      <h3>Añadir una reseña</h3>
+      <form method="post" action="{% url 'add_review' pueblo.pk 'pueblo' %}">
+        {% csrf_token %}
 
-          <label for="rating">Calificación:</label>
-          <div class="text-center">
-            <div id="star-rating" class="star-rating">
-              {% for i in "54321"|make_list %}
-              <input
-                type="radio"
-                id="star-{{ i }}"
-                name="rating"
-                value="{{ i }}"
-                required
-              />
+        <label for="rating">Calificación:</label>
+        <div class="text-center">
+          <div id="star-rating" class="star-rating">
+            {% for i in "54321"|make_list %}
+              <input type="radio" id="star-{{ i }}" name="rating" value="{{ i }}" required />
               <label for="star-{{ i }}" title="{{ i }} estrellas">
                 <i class="fas fa-star"></i>
               </label>
-              {% endfor %}
-            </div>
+            {% endfor %}
           </div>
+        </div>
 
-          <label for="id_comment">Comentario:</label>
-          <br />
-          <textarea name="comment" id="id_comment" required></textarea>
-          <br />
-          <button type="submit" class="btn btn-success mt-2">
-            Enviar reseña
-          </button>
-        </form>
+        <label for="id_comment">Comentario:</label><br />
+        <textarea name="comment" id="id_comment" required></textarea><br />
+        <button type="submit" class="btn btn-success mt-2">Enviar reseña</button>
+      </form>
 
-        {% if pueblo.gestor %}
-        <a
-          class="chat-button"
-          href="{% url 'chat-con-pueblo' slug=pueblo.slug %}"
-          >Hablar con el gestor</a
-        >
-        {% else %}
-        <p>Este pueblo aún no tiene gestor disponible.</p>
-        {% endif %}
-      </div>
-      <!-- Cierra el contenedor principal -->
+      {% if pueblo.gestor %}
+      <a class="chat-button" href="{% url 'chat-con-pueblo' slug=pueblo.slug %}">Hablar con el gestor</a>
+      {% else %}
+      <p>Este pueblo aún no tiene gestor disponible.</p>
+      {% endif %}
     </div>
+  </div>
 
-    <!-- Barra de navegación inferior -->
-    <div class="bottom-nav">
-      <a href="{% url 'pueblos_principal' %}"
-        ><i class="fas fa-home"></i>Inicio</a
-      >
-      <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>
-      <a href="{% url 'perfil'%}"><i class="fas fa-user"></i>Perfil</a>
-      <a href="{% url 'chatbot'%}"
-        ><i class="fa-solid fa-robot"></i>Be Rural GPT</a
-      >
-    </div>
-  </body>
+  <!-- Footer -->
+  <div class="bottom-nav">
+    <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
+    <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>
+    <a href="{% url 'perfil'%}"><i class="fas fa-user"></i>Perfil</a>
+    <a href="{% url 'chatbot'%}"><i class="fa-solid fa-robot"></i>Be Rural GPT</a>
+  </div>
+</body>
 </html>
+
