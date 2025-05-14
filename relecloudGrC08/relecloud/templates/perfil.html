@@ -1,328 +1,356 @@
-{% block content %}
-{% load static %}
+{% block content %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Perfil de Usuario</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil de Usuario</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f8f8;
-    }
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
 
-    .navbar {
-      position: sticky;
-      top: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fff;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #e0e0e0;
-      z-index: 100;
-    }
+      .navbar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        z-index: 100;
+      }
 
-    .icon-btn {
-      color: #333;
-      font-size: 1.25rem;
-      padding: 0.5rem;
-      text-decoration: none;
-      cursor: pointer;
-    }
+      .icon-btn {
+        color: #333;
+        font-size: 1.25rem;
+        padding: 0.5rem;
+        text-decoration: none;
+        cursor: pointer;
+      }
 
-    .icon-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 50%;
-    }
+      .icon-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 50%;
+      }
 
-    .navbar .title {
-      flex: 1;
-      text-align: center;
-      font-size: 1.125rem;
-      font-weight: 500;
-      color: #333;
-    }
+      .navbar .title {
+        flex: 1;
+        text-align: center;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #333;
+      }
 
-    .perfil-header {
-      text-align: center;
-      padding: 32px 16px;
-    }
+      .perfil-header {
+        text-align: center;
+        padding: 32px 16px;
+      }
 
-    .perfil-avatar {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 16px;
-      border-radius: 50%;
-      background: #eee;
-      overflow: hidden;
-    }
+      .perfil-avatar {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: #eee;
+        overflow: hidden;
+      }
 
-    .perfil-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+      .perfil-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-    .perfil-name {
-      font-size: 1.25rem;
-      margin-bottom: 4px;
-    }
+      .perfil-name {
+        font-size: 1.25rem;
+        margin-bottom: 4px;
+      }
 
-    .perfil-email {
-      color: #666;
-      margin-bottom: 24px;
-    }
+      .perfil-email {
+        color: #666;
+        margin-bottom: 24px;
+      }
 
-    .perfil-card {
-      max-width: 360px;
-      margin: 0 auto 48px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-    }
+      .perfil-card {
+        max-width: 360px;
+        margin: 0 auto 48px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
 
-    .perfil-card a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      text-decoration: none;
-      color: #333;
-      border-bottom: 1px solid #eee;
-      transition: all 0.3s ease;
-      background-color: white;
-    }
+      .perfil-card a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        text-decoration: none;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+        background-color: white;
+      }
 
-    .perfil-card a:hover {
-      background-color: #f0f0f0;
-      transform: scale(1.03);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
+      .perfil-card a:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-    .perfil-card a:last-child {
-      border-bottom: none;
-    }
+      .perfil-card a:last-child {
+        border-bottom: none;
+      }
 
-    .perfil-card div {
-      display: flex;
-      align-items: center;
-    }
+      .perfil-card div {
+        display: flex;
+        align-items: center;
+      }
 
-    .perfil-card i {
-      font-size: 1.2rem;
-      margin-right: 12px;
-    }
+      .perfil-card i {
+        font-size: 1.2rem;
+        margin-right: 12px;
+      }
 
-    .perfil-card i.fa-chevron-right {
-      color: #bbb;
-    }
+      .perfil-card i.fa-chevron-right {
+        color: #bbb;
+      }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background-color: white;
-      display: flex;
-      justify-content: space-evenly;
-      padding: 10px 0;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        display: flex;
+        justify-content: space-evenly;
+        padding: 10px 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      }
 
-    .bottom-nav a {
-      text-decoration: none;
-      color: black;
-      text-align: center;
-      font-size: 14px;
-    }
+      .bottom-nav a {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        font-size: 14px;
+      }
 
-    .bottom-nav i {
-      display: block;
-      font-size: 20px;
-      margin-bottom: 5px;
-    }
+      .bottom-nav i {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
 
-    /* MODAL */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 200;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      animation: fadeIn 0.3s ease;
-      justify-content: center;
-      align-items: center;
-    }
+      /* MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 200;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+        justify-content: center;
+        align-items: center;
+      }
 
-    .modal-content {
-      background-color: #fff;
-      padding: 28px 22px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      animation: slideUp 0.3s ease;
-    }
+      .modal-content {
+        background-color: #fff;
+        padding: 28px 22px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        animation: slideUp 0.3s ease;
+      }
 
-    .modal-content h3 {
-      margin-bottom: 25px;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
+      .modal-content h3 {
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
 
-    .modal-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-    }
+      .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
 
-    .modal-buttons button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-    }
+      .modal-buttons button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+      }
 
-    .btn-cancel {
-      background-color: #f3f3f3;
-      color: #333;
-    }
+      .btn-cancel {
+        background-color: #f3f3f3;
+        color: #333;
+      }
 
-    .btn-cancel:hover {
-      background-color: #ddd;
-    }
+      .btn-cancel:hover {
+        background-color: #ddd;
+      }
 
-    .btn-logout {
-      background-color: #ef4444;
-      color: white;
-    }
+      .btn-logout {
+        background-color: #ef4444;
+        color: white;
+      }
 
-    .btn-logout:hover {
-      background-color: #dc2626;
-    }
+      .btn-logout:hover {
+        background-color: #dc2626;
+      }
 
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
 
-    .fade-in {
-      animation: fadeIn 0.3s ease forwards;
-    }
+      .fade-in {
+        animation: fadeIn 0.3s ease forwards;
+      }
 
-    .fade-out {
-      animation: fadeOut 0.3s ease forwards;
-    }
-  </style>
-</head>
+      .fade-out {
+        animation: fadeOut 0.3s ease forwards;
+      }
+    </style>
+  </head>
 
-<body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <a href="{% url 'pueblos_principal' %}" class="icon-btn">
-      <i class="fas fa-arrow-left"></i>
-    </a>
-    <div class="title">Perfil</div>
-    <span class="icon-btn" onclick="showModal()">
-      <i class="fas fa-right-from-bracket"></i>
-    </span>
-  </nav>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="{% url 'pueblos_principal' %}" class="icon-btn">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div class="title">Perfil</div>
+      <span class="icon-btn" onclick="showModal()">
+        <i class="fas fa-right-from-bracket"></i>
+      </span>
+    </nav>
 
-  <!-- Perfil -->
-  <div class="perfil-header">
-    <div class="perfil-avatar">
-      <img src="{% if user.foto_perfil %}{{ user.foto_perfil.url }}{% else %}{% static 'res/img/default.jpg' %}{% endif %}" alt="Foto de perfil">
+    <!-- Perfil -->
+    <div class="perfil-header">
+      <div class="perfil-avatar">
+        <img
+          src="{% if user.foto_perfil %}{{ user.foto_perfil.url }}{% else %}{% static 'res/img/default.jpg' %}{% endif %}"
+          alt="Foto de perfil"
+        />
+      </div>
+      <div class="perfil-name">{{ user.get_full_name }}</div>
+      <div class="perfil-email">{{ user.email }}</div>
     </div>
-    <div class="perfil-name">{{ user.get_full_name }}</div>
-    <div class="perfil-email">{{ user.email }}</div>
-  </div>
 
-  <div class="perfil-card">
-    <a href="{% url 'editar_perfil' %}">
-      <div><i class="fas fa-user"></i><span>Perfil</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
-    <a href="{% url 'chat' %}">
-      <div><i class="fas fa-comments"></i><span>Chats</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
-    <a href="{% url 'mudanza' %}">
-      <div><i class="fas fa-truck"></i><span>Mudanza</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
-  </div>
+    <div class="perfil-card">
+      <a href="{% url 'editar_perfil' %}">
+        <div><i class="fas fa-user"></i><span>Perfil</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="{% url 'chat' %}">
+        <div><i class="fas fa-comments"></i><span>Chats</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="{% url 'mudanza' %}">
+        <div><i class="fas fa-truck"></i><span>Mudanza</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
 
-  <!-- Formulario oculto de logout -->
-  <form id="logout-form" method="POST" action="{% url 'logout' %}" style="display: none;">
-    {% csrf_token %}
-  </form>
+    <!-- Formulario oculto de logout -->
+    <form
+      id="logout-form"
+      method="POST"
+      action="{% url 'logout' %}"
+      style="display: none"
+    >
+      {% csrf_token %}
+    </form>
 
-  <!-- Modal -->
-  <div id="logoutModal" class="modal">
-    <div class="modal-content">
-      <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
-      <div class="modal-buttons">
-        <button class="btn-cancel" onclick="hideModal()">Cancelar</button>
-        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    <!-- Modal -->
+    <div id="logoutModal" class="modal">
+      <div class="modal-content">
+        <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
+        <div class="modal-buttons">
+          <button class="btn-cancel" onclick="hideModal()">Cancelar</button>
+          <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Navegación inferior -->
-  <div class="bottom-nav">
-    <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
-    <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
-    <a href="{% url 'perfil' %}"><i class="fas fa-user"></i>Perfil</a>
-    <a href="{% url 'chatbot' %}"><i class="fa-solid fa-robot"></i>Be Rural GPT</a>
-  </div>
+    <!-- Navegación inferior -->
+    <div class="bottom-nav">
+      <a href="{% url 'pueblos_principal' %}"
+        ><i class="fas fa-home"></i>Inicio</a
+      >
+      <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
+      <a href="{% url 'chatbot' %}"
+        ><i class="fa-solid fa-robot"></i>Be Rural GPT</a
+      >
+      <a href="{% url 'perfil' %}"><i class="fas fa-user"></i>Perfil</a>
+    </div>
 
-  <!-- Script -->
-  <script>
-    function showModal() {
-      const modal = document.getElementById("logoutModal");
-      modal.classList.remove("fade-out");
-      modal.style.display = "flex";
-      modal.classList.add("fade-in");
-    }
-
-    function hideModal() {
-      const modal = document.getElementById("logoutModal");
-      modal.classList.remove("fade-in");
-      modal.classList.add("fade-out");
-      setTimeout(() => {
-        modal.style.display = "none";
+    <!-- Script -->
+    <script>
+      function showModal() {
+        const modal = document.getElementById("logoutModal");
         modal.classList.remove("fade-out");
-      }, 300);
-    }
+        modal.style.display = "flex";
+        modal.classList.add("fade-in");
+      }
 
-    function logout() {
-      document.getElementById("logout-form").submit();
-    }
-  </script>
-</body>
+      function hideModal() {
+        const modal = document.getElementById("logoutModal");
+        modal.classList.remove("fade-in");
+        modal.classList.add("fade-out");
+        setTimeout(() => {
+          modal.style.display = "none";
+          modal.classList.remove("fade-out");
+        }, 300);
+      }
+
+      function logout() {
+        document.getElementById("logout-form").submit();
+      }
+    </script>
+  </body>
 </html>
 {% endblock %}
