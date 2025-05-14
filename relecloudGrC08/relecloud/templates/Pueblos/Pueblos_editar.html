@@ -1,96 +1,235 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Editar {{ pueblo.name }}</title>
-    <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
-    <style>
-      body {
-        background: #f4f4f5;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0 16px;
-        box-sizing: border-box;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar {{ pueblo.name }}</title>
+  <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: #f4f4f5;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
-      .form-container {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        padding: 32px 24px;
-        width: 28%;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-sizing: border-box;
-      }
+    .navbar {
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 600;
+      color: #1f2937;
+    }
 
-      h2 {
-        text-align: center;
-        font-size: 24px;
-        color: #1f2937;
-        margin-bottom: 25px;
-      }
+    .navbar .left a {
+      color: black;
+      font-size: 20px;
+      transition: color 0.2s ease;
+    }
 
-      label {
-        display: block;
-        margin-top: 20px;
-        font-weight: 600;
-        color: #374151;
-        font-size: 15px;
-      }
+    .navbar .left a:hover {
+      color: #2563eb;
+    }
 
-      input[type="text"],
-      textarea,
-      input[type="file"] {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 10px 12px;
-        font-size: 14px;
-        border-radius: 10px;
-        border: 1px solid #d1d5db;
-        background-color: #f9fafb;
-        margin-top: 8px;
-      }
+    .navbar .title {
+      flex: 1;
+      text-align: center;
+      font-weight: 600;
+    }
 
-      .btn {
-        margin-top: 30px;
-        width: 100%;
-        padding: 12px;
-        background-color: #22c55e;
-        color: white;
-        font-weight: bold;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        font-size: 16px;
-      }
+    .form-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+      overflow-y: auto;
+      box-sizing: border-box;
+      height: calc(100vh - 60px);
+    }
 
-      .btn:hover {
-        background-color: #16a34a;
-      }
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      color: #22c55e;
+      margin-bottom: 25px;
+    }
 
-      /* Estilo para el link de imagen actual */
-      a {
-        color: #2563eb;
-        text-decoration: underline;
-        font-size: 14px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="form-container">
-      <h2>Editar pueblo: {{ pueblo.name }}</h2>
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 15px;
+    }
 
-      <form class="form" method="post" enctype="multipart/form-data">
-        {% csrf_token %} {{ form.as_p }}
-        <button type="submit" class="btn">Guardar cambios</button>
-      </form>
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background-color: #f9fafb;
+      margin-top: 8px;
+    }
+
+    .btn {
+      margin-top: 30px;
+      width: 100%;
+      padding: 12px;
+      background-color: #22c55e;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background-color: #16a34a;
+    }
+
+    /* Modal personalizado (como en editar perfil) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h3 {
+      margin: 0;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .cancelar-btn {
+      background-color: #e5e7eb;
+      color: #111827;
+    }
+
+    .salir-btn {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN -->
+  <nav class="navbar">
+    <div class="left">
+      <a href="#" id="volver">
+        <i class="fas fa-arrow-left"></i>
+      </a>
     </div>
-  </body>
+    <div class="title">Modo edición de pueblo</div>
+    <div class="right"></div>
+  </nav>
+
+  <!-- FORMULARIO -->
+  <div class="form-container">
+    <h2>Editar pueblo: {{ pueblo.name }}</h2>
+    <form id="edit-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn">Guardar cambios</button>
+    </form>
+  </div>
+
+  <!-- MODAL FUNCIONAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <h3>Tienes cambios sin guardar. ¿Deseas salir sin guardar?</h3>
+      <div class="modal-buttons">
+        <button class="cancelar-btn" id="cancelar">Cancelar</button>
+        <button class="salir-btn" id="salir">Salir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const form = document.getElementById('edit-form');
+    const volver = document.getElementById('volver');
+    const modal = document.getElementById('modal');
+    const salir = document.getElementById('salir');
+    const cancelar = document.getElementById('cancelar');
+    let cambios = false;
+
+    form.querySelectorAll('input, textarea, select').forEach(field => {
+      field.addEventListener('input', () => cambios = true);
+    });
+
+    volver.addEventListener('click', e => {
+      e.preventDefault();
+      if (cambios) {
+        modal.style.display = 'flex';
+      } else {
+        window.location.href = "{% url 'pueblo_detail' slug=pueblo.slug %}";
+      }
+    });
+
+    cancelar.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    salir.addEventListener('click', () => {
+      window.location.href = "{% url 'pueblo_detail' slug=pueblo.slug %}";
+    });
+
+    form.addEventListener('submit', () => {
+      cambios = false;
+    });
+  </script>
+</body>
 </html>
