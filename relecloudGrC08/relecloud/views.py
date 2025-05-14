@@ -24,7 +24,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .utils_llm import recuperar_contexto, llamar_llm_openrouter
 from .forms import EditarPerfilForm
-
+from django.contrib import messages
 
 
 # Create your views here.
@@ -517,7 +517,8 @@ def editar_perfil(request):
         form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('perfil')
+            messages.success(request, '¡Perfil actualizado correctamente!')
+            return redirect('perfil')  # ✅ Redirige al perfil después de guardar
     else:
         form = EditarPerfilForm(instance=request.user)
 

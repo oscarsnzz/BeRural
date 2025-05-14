@@ -1,4 +1,5 @@
 {% block content %}
+{% load static %}
 <head>
   <script src="https://unpkg.com/htmx.org"></script>
   <script src="https://unpkg.com/htmx-ext-ws"></script>
@@ -259,7 +260,9 @@
           {% if user.es_gestor and member != user or not user.es_gestor and member.es_gestor %}
             <li class="chat-item">
               <a href="{% url 'start-chat' chat.group_name %}">
-                <div class="avatar"></div>
+                <div class="avatar">
+                  <img src="{% if member.foto_perfil %}{{ member.foto_perfil.url }}{% else %}{% static 'res/img/default.jpg' %}{% endif %}" alt="Foto" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                </div>
                 <div class="chat-info">
                   <div class="chat-name">
                     {% if user.es_gestor %}
