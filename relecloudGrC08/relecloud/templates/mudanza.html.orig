@@ -224,7 +224,6 @@
     </ul>
   </div>
 
-  
   <div class="bottom-nav">
     <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
     <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
