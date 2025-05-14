@@ -63,8 +63,14 @@ class UsuarioForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Correo Electrónico')
-    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    email = forms.EmailField(
+        label='Correo Electrónico',
+        widget=forms.EmailInput(attrs={'placeholder': 'ejemplo@correo.com'})
+    )
+    password = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Tu contraseña'})
+    )
 
     def clean(self):
         cleaned_data = super().clean()
