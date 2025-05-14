@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -51,5 +53,7 @@ urlpatterns = [
     # Verificar correos duplicados
     path("verificar-email/", views.verificar_email, name="verificar_email"),
 
+    # Para hacer logout del perfil
+    path("logout/", LogoutView.as_view(next_page='index'), name="logout"),
 
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
