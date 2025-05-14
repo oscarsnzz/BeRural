@@ -1,16 +1,14 @@
+from sentence_transformers import SentenceTransformer
 import numpy as np
 import faiss
 import pickle
 from .models import Pueblo
 import requests
 
-def get_modelo_embedding():
-    from sentence_transformers import SentenceTransformer
-    return SentenceTransformer("all-MiniLM-L6-v2")
+modelo_embedding = SentenceTransformer("all-MiniLM-L6-v2")
 
 def recuperar_contexto(pregunta, k=3):
-    modelo = get_modelo_embedding()
-    pregunta_emb = modelo.encode([pregunta])
+    pregunta_emb = modelo_embedding.encode([pregunta])
     index = faiss.read_index("relecloud/faiss_index.index")
 
     with open("relecloud/id_map.pkl", "rb") as f:
@@ -40,6 +38,7 @@ def llamar_llm_openrouter(contexto, pregunta):
 
     === RESPUESTA DEL ASISTENTE ===
     """
+    
 
     response = requests.post(
         "https://openrouter.ai/api/v1/chat/completions",
@@ -48,7 +47,7 @@ def llamar_llm_openrouter(contexto, pregunta):
             "Content-Type": "application/json"
         },
         json={
-            "model": "mistralai/mistral-7b-instruct:free",
+            "model": "mistralai/mistral-7b-instruct:free",  # o cualquier otro gratuito
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.6,
             "max_tokens": 512
