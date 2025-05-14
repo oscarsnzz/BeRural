@@ -17,10 +17,10 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-ENVIROMENT = env('ENVIROMENT', default="production")  # 'development' or 'production'
+ENVIRONMENT = env('ENVIRONMENT', default="production")  # 'development' or 'production'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Cambia esto a 'development' para desarrollo local
-# ENVIROMENT = 'development'  # Cambia esto a 'production' para producción
+# ENVIRONMENT = 'development'  # Cambia esto a 'production' para producción
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -103,7 +103,7 @@ MIDDLEWARE = [
 
 ASGI_APPLICATION = "project.asgi.application"
 
-if ENVIROMENT == 'development':
+if ENVIRONMENT == 'development':
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels.layers.InMemoryChannelLayer"
@@ -125,7 +125,7 @@ else :
 #     "default": {
 #         "ENGINE": "django.db.backends.sqlite3",
 #         "NAME": "mydatabase",
-if ENVIROMENT == 'development':
+if ENVIRONMENT == 'development':
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -180,7 +180,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files (uploaded files like images)
 MEDIA_URL = '/media/'
 
-if ENVIROMENT == 'development':
+if ENVIRONMENT == 'development':
    MEDIA_ROOT = BASE_DIR / 'media'
 else:
    default_storage = 'cloudinary_storage.storage.MediaCloudinaryStorage'
