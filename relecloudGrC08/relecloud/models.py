@@ -138,12 +138,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'apellidos']
 
-    foto_perfil = models.ImageField(
-        upload_to='fotos_perfil/',
-        default='fotos_perfil/default.jpg',  # imagen por defecto
-        blank=False,
-        null=True
-    )
+    # foto_perfil = models.ImageField(
+    #     upload_to='fotos_perfil/',
+    #     default='fotos_perfil/default.jpg',  # imagen por defecto
+    #     blank=False,
+    #     null=True
+    # )
+    foto_perfil = CloudinaryField('image', null=True, blank=True, default='ddefault_nmvxxt')
 
     objects = UsuarioManager()
 

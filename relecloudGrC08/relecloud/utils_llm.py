@@ -4,6 +4,7 @@ import faiss
 import pickle
 from .models import Pueblo
 import requests
+import os
 
 modelo_embedding = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -43,7 +44,7 @@ def llamar_llm_openrouter(contexto, pregunta):
     response = requests.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
-            "Authorization": "Bearer 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",
+            "Authorization": f"Bearer {os.environ.get('OPENROUTER_API_KEY')}",
             "Content-Type": "application/json"
         },
         json={
