@@ -77,29 +77,8 @@ class Pueblo(models.Model):
         average_rating = self.reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
         return average_rating
 
-
-
-
 class Review(models.Model):
     RATING_CHOICES = [(i, i) for i in range(1, 5)]  # Ratings from 1 to 5
-
-
-    # # Eliminar esto 
-    # destination = models.ForeignKey(
-    #     Destination, 
-    #     on_delete=models.CASCADE, 
-    #     related_name='reviews', 
-    #     null=True, 
-    #     blank=True
-    # )
-    # cruise = models.ForeignKey(
-    #     Cruise, 
-    #     on_delete=models.CASCADE, 
-    #     related_name='reviews', 
-    #     null=True, 
-    #     blank=True
-    # )
-
 
     # Aqui no borrar 
     pueblo = models.ForeignKey(
@@ -158,6 +137,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'apellidos']
+
+    foto_perfil = models.ImageField(
+        upload_to='fotos_perfil/',
+        default='fotos_perfil/default.jpg',  # imagen por defecto
+        blank=False,
+        null=True
+    )
 
     objects = UsuarioManager()
 
