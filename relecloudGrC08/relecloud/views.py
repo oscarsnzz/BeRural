@@ -23,6 +23,8 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
 from .utils_llm import recuperar_contexto, llamar_llm_openrouter
+from .forms import EditarPerfilForm
+
 
 
 # Create your views here.
@@ -508,3 +510,15 @@ def verificar_email(request):
     email = request.GET.get("email", "")
     existe = Usuario.objects.filter(email=email).exists()
     return JsonResponse({'exists': existe})
+
+
+def editar_perfil(request):
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil')
+    else:
+        form = EditarPerfilForm(instance=request.user)
+
+    return render(request, 'editar_perfil.html', {'form': form})

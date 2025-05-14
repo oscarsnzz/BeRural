@@ -143,3 +143,7 @@ class CambiarPasswordForm(forms.Form):
 
         return cleaned_data
 
+class EditarPerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['name', 'apellidos', 'telefono', 'foto_perfil']
