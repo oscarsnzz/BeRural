@@ -1,85 +1,96 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Editar {{ pueblo.name }}</title>
-    <link rel="stylesheet" href="{% static 'res/css/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'res/css/theme.css' %}" />
     <style>
-        body {
-            background: #f0f4f8;
-            font-family: Arial, sans-serif;
-            padding: 40px;
-        }
+      body {
+        background: #f4f4f5;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 16px;
+        box-sizing: border-box;
+      }
 
-        .form-container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+      .form-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 32px 24px;
+        width: 28%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-sizing: border-box;
+      }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #2d2d2d;
-        }
+      h2 {
+        text-align: center;
+        font-size: 24px;
+        color: #1f2937;
+        margin-bottom: 25px;
+      }
 
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-            color: #333;
-        }
+      label {
+        display: block;
+        margin-top: 20px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 15px;
+      }
 
-        input[type="text"],
-        textarea,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
+      input[type="text"],
+      textarea,
+      input[type="file"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        background-color: #f9fafb;
+        margin-top: 8px;
+      }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+      .btn {
+        margin-top: 30px;
+        width: 100%;
+        padding: 12px;
+        background-color: #22c55e;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        font-size: 16px;
+      }
 
-        .btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 20px;
-            background-color: #4ade80;
-            color: #1e1e1e;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-        }
+      .btn:hover {
+        background-color: #16a34a;
+      }
 
-        .btn:hover {
-            background-color: #22c55e;
-        }
+      /* Estilo para el link de imagen actual */
+      a {
+        color: #2563eb;
+        text-decoration: underline;
+        font-size: 14px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="form-container">
+      <h2>Editar pueblo: {{ pueblo.name }}</h2>
 
-<div class="form-container">
-    <h2>Editar pueblo: {{ pueblo.name }}</h2>
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
+      <form class="form" method="post" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p }}
         <button type="submit" class="btn">Guardar cambios</button>
-    </form>
-</div>
-
-</body>
+      </form>
+    </div>
+  </body>
 </html>
