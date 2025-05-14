@@ -1,209 +1,240 @@
 {% block content %}
 {% load static %}
-
-
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil de Usuario</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-        /* Navbar fijada arriba, con línea inferior y espacio */
-        .navbar {
-          position: sticky;
-          top: 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background: #fff;
-          padding: 0.75rem 1rem;
-          border-bottom: 1px solid #e0e0e0;
-          z-index: 100;
-        }
-        /* Botones de icono a los lados */
-        .navbar .icon-btn {
-          color: #333;
-          font-size: 1.25rem;
-          padding: 0.5rem;
-          text-decoration: none;
-        }
-        .navbar .icon-btn:hover {
-          background: rgba(0,0,0,0.05);
-          border-radius: 50%;
-        }
-        /* Título siempre centrado */
-        .navbar .title {
-          flex: 1;
-          text-align: center;
-          font-size: 1.125rem;
-          font-weight: 500;
-          color: #333;
-        }
-        .search-bar {
-            flex-grow: 1;
-            max-width: 300px;
-            padding: 5px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: white;
-            display: flex;
-            justify-content: space-evenly;
-            padding: 10px 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .bottom-nav a {
-            text-decoration: none;
-            color: black;
-            text-align: center;
-            font-size: 14px;
-        }
-        .bottom-nav i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
 
-        /* Estilos específicos para perfil */
-        .perfil-header {
-            text-align: center;
-            padding: 32px 16px;
-        }
-        .perfil-avatar {
-            width: 100px; height: 100px;
-            margin: 0 auto 16px;
-            border-radius: 50%;
-            background: #eee;
-            overflow: hidden;
-        }
-        .perfil-avatar img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .perfil-name {
-            font-size: 1.25rem;
-            margin-bottom: 4px;
-        }
-        .perfil-email {
-            color: #666;
-            margin-bottom: 24px;
-        }
-        .perfil-card {
-            max-width: 360px;
-            margin: 0 auto 48px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-        .perfil-card a {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 14px 16px;
-          text-decoration: none;
-          color: #333;
-          border-bottom: 1px solid #eee;
-          transition: all 0.3s ease; /* transición suave */
-          background-color: white;
-          z-index: 0;
-          position: relative;
-        }
+      .navbar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        z-index: 100;
+      }
 
-        .perfil-card a:hover {
-          background-color: #f0f0f0;         /* ligero oscurecimiento */
-          transform: scale(1.03);            /* ampliación sutil */
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* sombra para elevar */
-          z-index: 1;
+      .navbar .icon-btn {
+        color: #333;
+        font-size: 1.25rem;
+        padding: 0.5rem;
+        text-decoration: none;
+      }
+
+      .navbar .icon-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 50%;
+      }
+
+      .navbar .title {
+        flex: 1;
+        text-align: center;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #333;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        display: flex;
+        justify-content: space-evenly;
+        padding: 10px 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .bottom-nav a {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .bottom-nav i {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
+
+      .perfil-header {
+        text-align: center;
+        padding: 32px 16px;
+      }
+
+      .perfil-avatar {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: #eee;
+        overflow: hidden;
+      }
+
+      .perfil-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .perfil-name {
+        font-size: 1.25rem;
+        margin-bottom: 4px;
+      }
+
+      .perfil-email {
+        color: #666;
+        margin-bottom: 24px;
+      }
+
+      .perfil-card {
+        max-width: 360px;
+        margin: 0 auto 48px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+
+      .perfil-card a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        text-decoration: none;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+        background-color: white;
+        z-index: 0;
+        position: relative;
+      }
+
+      .perfil-card a:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1;
+      }
+
+      .perfil-card a:last-child {
+        border-bottom: none;
+      }
+
+      .perfil-card div {
+        display: flex;
+        align-items: center;
+      }
+
+      .perfil-card i {
+        font-size: 1.2rem;
+        margin-right: 12px;
+      }
+
+      .perfil-card i.fa-chevron-right {
+        color: #bbb;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        animation: fadeOut 3s ease forwards;
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
         }
-        .perfil-card a:last-child { border-bottom: none; }
-        .perfil-card div { display: flex; align-items: center; }
-        .perfil-card i { font-size: 1.2rem; margin-right: 12px; }
-        .perfil-card i.fa-chevron-right { color: #bbb; }
+        80% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
     </style>
   </head>
 
-  <!-- Cabecera -->
-  <nav class="navbar">
-    <!-- Flecha “back” ahora a pueblos_principal -->
-    <a href="{% url 'pueblos_principal' %}" class="icon-btn">
-      <i class="fas fa-arrow-left"></i>
-    </a>
-
-    <!-- Título perfectamente centrado -->
-    <div style="flex-grow: 1; text-align: center">
-      <h2 style="margin: 0">Perfil</h2>
-    </div>
-
-    <!-- Icono editar -->
-    {% comment %}<a href="{% url 'editar_perfil' %}" class="icon-btn"
-      >{% endcomment %}
+  <body>
+    <!-- Cabecera -->
+    <nav class="navbar">
+      <a href="{% url 'pueblos_principal' %}" class="icon-btn">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div style="flex-grow: 1; text-align: center">
+        <h2 style="margin: 0">Perfil</h2>
+      </div>
       <a href="{% url 'editar_perfil' %}" class="icon-btn">
-  <i class="fas fa-edit"></i>
-</a>
+        <i class="fas fa-edit"></i>
+      </a>
+    </nav>
 
-      {% comment %}</a
-    >{% endcomment %}
-  </nav>
-
-  <!-- Contenido -->
-  <div class="perfil-header">
-    <div class="perfil-avatar">
-      <img
-  src="{% if user.foto_perfil %}{{ user.foto_perfil.url }}{% else %}{% static 'res/img/default.jpg' %}{% endif %}"
-  alt="Foto de perfil"
->
-
-
+    <!-- Contenido -->
+    <div class="perfil-header">
+      <div class="perfil-avatar">
+        <img
+          src="{% if user.foto_perfil %}{{ user.foto_perfil.url }}{% else %}{% static 'res/img/default.jpg' %}{% endif %}"
+          alt="Foto de perfil"
+        />
+      </div>
+      <div class="perfil-name">{{ user.get_full_name }}</div>
+      <div class="perfil-email">{{ user.email }}</div>
     </div>
-    <div class="perfil-name">{{ user.get_full_name }}</div>
-    <div class="perfil-email">{{ user.email }}</div>
-  </div>
 
-  <div class="perfil-card">
-    <a href="{% url 'perfil' %}">
-      <div><i class="fas fa-user"></i><span>Perfil</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
+    <div class="perfil-card">
+      <a href="{% url 'editar_perfil' %}">
+        <div><i class="fas fa-user"></i><span>Perfil</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="{% url 'chat' %}">
+        <div><i class="fas fa-comments"></i><span>Chats</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="{% url 'mudanza' %}">
+        <div><i class="fas fa-truck"></i><span>Mudanza</span></div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
 
+    <!-- Navegación inferior -->
+    <div class="bottom-nav">
+      <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
+      <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
+      <a href="{% url 'perfil' %}"><i class="fas fa-user"></i>Perfil</a>
+      <a href="{% url 'chatbot' %}"><i class="fa-solid fa-robot"></i>Be Rural GPT</a>
+    </div>
 
-    <a href="{% url 'chat' %}">
-      <div><i class="fas fa-comments"></i><span>Chats</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
-
-    <a href="{% url 'mudanza' %}">
-      <div><i class="fas fa-truck"></i><span>Mudanza</span></div>
-      <i class="fas fa-chevron-right"></i>
-    </a>
-  </div>
-
-  <!-- Navegación inferior -->
-  <div class="bottom-nav">
-    <a href="{% url 'pueblos_principal' %}"
-      ><i class="fas fa-home"></i>Inicio</a
-    >
-    <a href="{% url 'chat'%}"><i class="fas fa-comments"></i>Chats</a>
-    <a href="{% url 'perfil'%}"><i class="fas fa-user"></i>Perfil</a>
-    <a href="{% url 'chatbot'%}"
-      ><i class="fa-solid fa-robot"></i>Be Rural GPT</a
-    >
-  </div>
+    <!-- Toast -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="toast">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  </body>
 </html>
 {% endblock %}
+
