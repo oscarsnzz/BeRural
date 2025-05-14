@@ -111,13 +111,24 @@
             overflow: hidden;
         }
         .perfil-card a {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #eee;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 14px 16px;
+          text-decoration: none;
+          color: #333;
+          border-bottom: 1px solid #eee;
+          transition: all 0.3s ease; /* transición suave */
+          background-color: white;
+          z-index: 0;
+          position: relative;
+        }
+
+        .perfil-card a:hover {
+          background-color: #f0f0f0;         /* ligero oscurecimiento */
+          transform: scale(1.03);            /* ampliación sutil */
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* sombra para elevar */
+          z-index: 1;
         }
         .perfil-card a:last-child { border-bottom: none; }
         .perfil-card div { display: flex; align-items: center; }
