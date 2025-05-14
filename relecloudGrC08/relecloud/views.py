@@ -259,18 +259,21 @@ def chat_con_pueblo_view(request, slug):
     gestor = pueblo.gestor
 
     if request.user == gestor:
-        return redirect('pueblos_principal')  # por si el gestor intenta hablar consigo mismo
+        return redirect('pueblos_principal')  # evitar que el gestor se hable a sí mismo
 
     user_ids = sorted([str(request.user.id), str(gestor.id)])
     group_name = f"chat-{slug}-{'-'.join(user_ids)}"
 
-    chat_group, created = ChatGroup.objects.get_or_create(
+    chat_group, _ = ChatGroup.objects.get_or_create(
         group_name=group_name,
         defaults={"is_private": True}
     )
     chat_group.members.add(request.user, gestor)
 
     messages = chat_group.mensajes.all().order_by('-created')[:30][::-1]
+
+    # 👇 AÑADIMOS ESTO para que aparezcan todos los chats en la barra lateral
+    mis_chats = request.user.chat_groups.filter(is_private=True)
 
     if request.method == 'POST':
         form = ChatMessageCreateForm(request.POST)
@@ -299,8 +302,10 @@ def chat_con_pueblo_view(request, slug):
         'pueblo': pueblo,
         'gestor': gestor,
         'chatroom_name': group_name,
-        'other_user': gestor if request.user != gestor else None
+        'other_user': gestor if request.user != gestor else None,
+        'mis_chats': mis_chats,  # 👈 ESTO ES LO QUE FALTABA
     })
+
 
 
 def get_or_create_chatroom(request, username):
