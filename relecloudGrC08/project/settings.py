@@ -19,7 +19,7 @@ environ.Env.read_env()
 
 ENVIROMENT = env('ENVIROMENT', default="production")  # 'development' or 'production'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
- # Cambia esto a 'development' para desarrollo local
+# Cambia esto a 'development' para desarrollo local
 # ENVIROMENT = 'development'  # Cambia esto a 'production' para producción
 BASE_DIR = Path(__file__).resolve().parent.parent
 
