@@ -251,6 +251,43 @@
       .fade-out {
         animation: fadeOut 0.3s ease forwards;
       }
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 15px 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+      }
+
+      .bottom-nav a {
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .bottom-nav i {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .bottom-nav a:hover i {
+        color: #4caf50;
+        transform: translateY(-4px);
+      }
+
+      .bottom-nav a:hover {
+        color: #4caf50;
+      }
+
     </style>
   </head>
 
@@ -280,7 +317,7 @@
 
     <div class="perfil-card">
       <a href="{% url 'editar_perfil' %}">
-        <div><i class="fas fa-user"></i><span>Perfil</span></div>
+        <div><i class="fas fa-user"></i><span>Editar Perfil</span></div>
         <i class="fas fa-chevron-right"></i>
       </a>
       <a href="{% url 'chat' %}">
@@ -310,11 +347,24 @@
 
     <!-- Navegación inferior -->
     <div class="bottom-nav">
-      <a href="{% url 'pueblos_principal' %}"><i class="fas fa-home"></i>Inicio</a>
-      <a href="{% url 'chat' %}"><i class="fas fa-comments"></i>Chats</a>
-      <a href="{% url 'chatbot' %}"><i class="fa-solid fa-robot"></i>Be Rural GPT</a>
-      <a href="{% url 'perfil' %}"><i class="fas fa-user"></i>Perfil</a>
+      <a href="{% url 'pueblos_principal' %}">
+        <i class="fas fa-home"></i>
+        Inicio
+      </a>
+      <a href="{% url 'chat' %}">
+        <i class="fas fa-comments"></i>
+        Chats
+      </a>
+      <a href="{% url 'chatbot' %}">
+        <i class="fa-solid fa-robot"></i>
+        Be Rural GPT
+      </a>
+      <a href="{% url 'perfil' %}">
+        <i class="fas fa-user"></i>
+        Perfil
+      </a>
     </div>
+
 
     <script>
       function showModal() {
