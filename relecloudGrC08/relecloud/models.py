@@ -144,7 +144,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     #     blank=False,
     #     null=True
     # )
-    foto_perfil = CloudinaryField('image', null=True, blank=True, default='ddefault_nmvxxt')
+    foto_perfil = CloudinaryField(
+    'image',
+    default='default_nmvxxt',
+    blank=True,
+    null=True
+)
+
 
     objects = UsuarioManager()
 
