@@ -1,14 +1,33 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Cambiar contraseña{% endblock %}
+{% block title %}Cambiar Contraseña{% endblock %}
 
 {% block content %}
-    <div class="container mt-5"> <!-- Ajuste para margen superior debido a la barra de navegación fija -->
-        <h1 class="display-4">Formulario de Registro</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Registrar</button>
-        </form>
+<div class="auth-container">
+  <div class="auth-image"></div>
+
+  <div class="auth-form">
+    <div class="logo-container">
+      <img src="{% static 'res/img/image.png' %}" alt="Logo Be Rural">
     </div>
+
+    <h1>Cambiar Contraseña</h1>
+    <p>Introduce tu nueva contraseña a continuación.</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <div style="color: red; font-size: 14px;">{{ field.errors|first }}</div>
+        {% endif %}
+      {% endfor %}
+
+      <button type="submit" class="btn">Guardar Contraseña</button>
+    </form>
+  </div>
+</div>
 {% endblock %}
