@@ -50,7 +50,6 @@
       display: flex;
       justify-content: center;
       border-bottom: 1px solid #eee;
-      margin-bottom: 1rem;
     }
 
     .tab {
@@ -74,18 +73,22 @@
       display: block;
     }
 
-    /* Gráfico */
     .chart-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
       min-height: 60vh;
+      padding: 2rem 1rem;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
     }
 
     #progressChart {
-      max-width: 360px;
       width: 100%;
       height: auto;
     }
@@ -113,7 +116,6 @@
     .completed { background: #8BC34A; }
     .pending   { background: #C8E6C9; }
 
-    /* Lista */
     .task-list {
       list-style: none;
       padding: 0;
@@ -167,13 +169,16 @@
   </nav>
 
   <div class="tabs">
-    <span class="tab" data-target="grafico" id="tab-grafico">Gráfico</span>
-    <span class="tab" data-target="lista" id="tab-lista">Lista</span>
+    <span class="tab" data-target="grafico">Gráfico</span>
+    <span class="tab" data-target="lista">Lista</span>
   </div>
 
+  <!-- Gráfico -->
   <div class="tab-content" id="grafico">
     <div class="chart-container">
-      <canvas id="progressChart"></canvas>
+      <div class="chart-wrapper">
+        <canvas id="progressChart"></canvas>
+      </div>
       <div class="legend">
         <div><span class="dot completed"></span> Tareas completadas</div>
         <div><span class="dot pending"></span> Tareas por completar</div>
@@ -181,6 +186,7 @@
     </div>
   </div>
 
+  <!-- Lista -->
   <div class="tab-content" id="lista">
     <form method="post" action="{% url 'add_tarea' %}" class="js-tarea-form">
       {% csrf_token %}
@@ -261,7 +267,7 @@
           }]
         },
         options: {
-          maintainAspectRatio: false,
+          maintainAspectRatio: true,
           responsive: true,
           cutout: "70%",
           plugins: {
