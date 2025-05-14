@@ -20,12 +20,24 @@ class ReviewForm(forms.ModelForm):
 
 
 class UsuarioForm(forms.ModelForm):
-    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repite la contraseña', widget=forms.PasswordInput)
+    password = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Crea una contraseña'})
+    )
+    password2 = forms.CharField(
+        label='Repite la contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Repite la contraseña'})
+    )
 
     class Meta:
         model = Usuario
         fields = ['name', 'apellidos', 'telefono', 'email', 'password']
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Tu nombre'}),
+            'apellidos': forms.TextInput(attrs={'placeholder': 'Tus apellidos'}),
+            'telefono': forms.TextInput(attrs={'placeholder': 'Número de teléfono'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'ejemplo@correo.com'}),
+        }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
