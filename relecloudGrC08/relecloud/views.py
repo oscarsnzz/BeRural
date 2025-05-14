@@ -98,20 +98,27 @@ def login_view(request):
 
 def pueblos(request):
     show_all = request.GET.get('show_all', 'false') == 'true'
+    
+    # Anotar cada pueblo con su media de valoraciones
     all_destinations = Pueblo.objects.annotate(average_rating=Avg('reviews__rating'))
+
     if show_all:
         destinations_list = all_destinations
     else:
         destinations_list = all_destinations.filter(average_rating__isnull=False).order_by('-average_rating')[:3]
 
-    for destination in destinations_list:
-        full_stars = int(destination.average_rating or 0)
-        empty_stars = 5 - full_stars
-        destination.stars_full = range(full_stars)
-        destination.stars_empty = range(empty_stars)
-    
-    pueblos_list = Pueblo.objects.all()  # Obtener todos los pueblos
-    return render(request, 'Pueblos/Pueblos_Principal.html', {'pueblos': pueblos_list})
+    # Calcular estrellas para cada pueblo
+    for destino in destinations_list:
+        full_stars = int(destino.average_rating or 0)
+        half_star = 1 if destino.average_rating and (destino.average_rating - full_stars) >= 0.5 else 0
+        empty_stars = 5 - full_stars - half_star
+        destino.stars_full = range(full_stars)
+        destino.star_half = half_star
+        destino.stars_empty = range(empty_stars)
+
+    return render(request, 'Pueblos/Pueblos_Principal.html', {
+        'pueblos': destinations_list  # pasamos la lista con anotaciones
+    })
 
 
 class PuebloDetailView(generic.DetailView):
@@ -150,8 +157,18 @@ from .models import Pueblo, Comunidad
 
 def pueblos_por_comunidad(request, comunidad_id):
     comunidad = get_object_or_404(Comunidad, id=comunidad_id)
-    pueblos = Pueblo.objects.filter(comunidad=comunidad)  # Obtener los pueblos de esa comunidad
-    
+    pueblos = Pueblo.objects.filter(comunidad=comunidad).annotate(average_rating=Avg('reviews__rating'))
+
+    for pueblo in pueblos:
+        avg = pueblo.average_rating or 0
+        full_stars = int(avg)
+        half_star = 1 if avg - full_stars >= 0.5 else 0
+        empty_stars = 5 - full_stars - half_star
+
+        pueblo.stars_full = range(full_stars)
+        pueblo.star_half = half_star
+        pueblo.stars_empty = range(empty_stars)
+
     return render(request, 'Pueblos/pueblos_por_comunidad.html', {
         'comunidad': comunidad,
         'pueblos': pueblos
