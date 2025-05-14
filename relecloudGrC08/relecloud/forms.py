@@ -87,6 +87,7 @@ class LoginForm(forms.Form):
     def get_user(self):
         return self.cleaned_data.get('usuario')
     
+    
 class ChatMessageCreateForm(forms.ModelForm):
     class Meta:
         model = GroupMessage
